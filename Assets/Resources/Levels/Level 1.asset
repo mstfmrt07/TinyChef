@@ -12,13 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adcc72dc5980a445f984525712dbfd78, type: 3}
   m_Name: Level 1
   m_EditorClassIdentifier: 
-  durationBetweenOrders: 20
-  orders:
+  levelName: Level 1
+  levelPrefab: {fileID: 3558299547257779017, guid: a12eb81ed1ac9482cb7b62ccb5d813cf,
+    type: 3}
+  durationBetweenOrders: 10
+  availableOrders:
   - recipe: {fileID: 11400000, guid: 0997d47dcfb93400786a24f46a36d296, type: 2}
-    duration: 90
+    duration: 50
+    timeRemaining: 0
   - recipe: {fileID: 11400000, guid: 1b5ccc3d48dae416f87865b4383117a6, type: 2}
-    duration: 90
-  - recipe: {fileID: 11400000, guid: 1b5ccc3d48dae416f87865b4383117a6, type: 2}
-    duration: 90
-  - recipe: {fileID: 11400000, guid: 0997d47dcfb93400786a24f46a36d296, type: 2}
-    duration: 90
+    duration: 50
+    timeRemaining: 0
+  oneStarScore: 100
+  twoStarScore: 250
+  threeStarScore: 500

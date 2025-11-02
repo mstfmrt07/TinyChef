@@ -4,72 +4,62 @@ using UnityEngine.Serialization;
 
 namespace TinyChef
 {
-    public class IngredientSupply : MonoBehaviour, IInteractable
+    public class IngredientSupply : BaseCounter
     {
         public IngredientData ingredientData;
         public SpriteRenderer ingredientImage;
-        public HighlightObject highlightObject;
-        public Transform spawnPoint;
 
         public Action<Ingredient> OnItemSupplied;
 
-        private Ingredient currentSupply;
-
         private void Awake()
         {
+            counterType = CounterType.IngredientSupply;
+            if (itemPlacePoint == null)
+            {
+                itemPlacePoint = transform;
+            }
             Initialize();
         }
 
         void Initialize()
         {
-            ingredientImage.sprite = ingredientData.icon;
+            if (ingredientImage != null && ingredientData != null)
+            {
+                ingredientImage.sprite = ingredientData.icon;
+            }
         }
 
-        public void Interact()
+        public override void Interact()
         {
-            if (FindObjectOfType<Chef>().CurrentIngredient == null)
+            Chef chef = FindObjectOfType<Chef>();
+            if (chef == null) return;
+
+            if (chef.CurrentIngredient == null)
             {
-                Supply();
+                Supply(chef);
             }
             else
             {
-                PlaceItem();
+                TryPutDownItem();
             }
         }
 
-        private void Supply()
+        private void Supply(Chef chef)
         {
-            if (currentSupply == null)
-            {
-                currentSupply = Instantiate(ingredientData.prefab, spawnPoint);
-                Debug.Log($"Item Supplied: {currentSupply.data.name}");
-            }
+            if (ingredientData == null || ingredientData.prefab == null) return;
 
-            OnItemSupplied?.Invoke(currentSupply);
-            FindObjectOfType<Chef>().GrabItem(currentSupply);
-            currentSupply = null;
+            Ingredient newIngredient = Instantiate(ingredientData.prefab, itemPlacePoint != null ? itemPlacePoint : transform);
+            newIngredient.transform.localPosition = Vector3.zero;
+            
+            Debug.Log($"Item Supplied: {newIngredient.data.name}");
+            OnItemSupplied?.Invoke(newIngredient);
+            chef.GrabItem(newIngredient);
         }
 
-        private void PlaceItem()
+        protected override bool CanPlaceItem(Ingredient ingredient)
         {
-            var ingredient = FindObjectOfType<Chef>().CurrentIngredient;
-            if (ingredient == null)
-                return;
-
-            currentSupply = ingredient;
-            FindObjectOfType<Chef>().DropItem();
-            currentSupply.transform.SetParent(spawnPoint);
-            currentSupply.transform.localPosition = Vector3.zero;
-        }
-
-        public void Select()
-        {
-            highlightObject.Select();
-        }
-
-        public void Deselect()
-        {
-            highlightObject.Deselect();
+            // Can place items back on supply counter
+            return true;
         }
     }
 }

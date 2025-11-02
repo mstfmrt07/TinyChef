@@ -8,5 +8,6 @@ namespace TinyChef
     {
         public IngredientData item;
         public IngredientState targetState;
+        public CookingType targetCookingType;
     }
 }

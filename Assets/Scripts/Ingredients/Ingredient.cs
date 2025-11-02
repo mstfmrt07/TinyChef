@@ -12,26 +12,38 @@ namespace TinyChef
         private IngredientState state;
         public IngredientState State => state;
 
+        private CookingType cookingType = CookingType.Raw;
+        public CookingType CookingType => cookingType;
+
         private void Awake()
         {
             state = IngredientState.Raw;
-            rawModel.SetActive(true);
-            processedModel.SetActive(false);
-            cookedModel.SetActive(false);
+            cookingType = CookingType.Raw;
+            rawModel?.SetActive(true);
+            processedModel?.SetActive(false);
+            cookedModel?.SetActive(false);
         }
 
         public void Process()
         {
-            state = IngredientState.Processed;
-            rawModel.SetActive(false);
-            processedModel.SetActive(true);
+            if (state == IngredientState.Raw)
+            {
+                state = IngredientState.Processed;
+                rawModel?.SetActive(false);
+                processedModel?.SetActive(true);
+            }
         }
 
-        public void Cook()
+        public void Cook(CookingType type = CookingType.Boiled)
         {
-            state = IngredientState.Cooked;
-            processedModel.SetActive(false);
-            cookedModel.SetActive(true);
+            if (state != IngredientState.Cooked)
+            {
+                state = IngredientState.Cooked;
+                cookingType = type;
+                rawModel?.SetActive(false);
+                processedModel?.SetActive(false);
+                cookedModel?.SetActive(true);
+            }
         }
     }
 }

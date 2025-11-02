@@ -3,54 +3,26 @@ using UnityEngine;
 
 namespace TinyChef
 {
-    public class ChoppingBoard : MonoBehaviour, IInteractable
+    public class ChoppingBoard : BaseCounter
     {
-        public HighlightObject highlightObject;
-        public Transform spawnPoint;
-
         public Action<Ingredient> OnItemProcessed;
 
-        private Ingredient currentIngredient;
-
-        public void Select()
+        protected override void ExecuteProcess()
         {
-            highlightObject.Select();
+            base.ExecuteProcess();
+            OnItemProcessed?.Invoke(currentItem);
         }
 
-        public void Deselect()
+        private void Awake()
         {
-            highlightObject.Deselect();
-        }
-
-        public void Interact()
-        {
-            if (currentIngredient != null)
+            if (counterType == CounterType.Basic)
             {
-                ProcessItem();
+                counterType = CounterType.CuttingBoard;
             }
-            else
+            if (itemPlacePoint == null && transform.childCount > 0)
             {
-                PlaceItem();
+                itemPlacePoint = transform;
             }
-        }
-
-        private void PlaceItem()
-        {
-            var ingredient = FindObjectOfType<Chef>().CurrentIngredient;
-            if (ingredient == null)
-                return;
-
-            currentIngredient = ingredient;
-            FindObjectOfType<Chef>().DropItem();
-            currentIngredient.transform.SetParent(spawnPoint);
-            currentIngredient.transform.localPosition = Vector3.zero;
-        }
-
-        private void ProcessItem()
-        {
-            Debug.Log("Item Processed");
-            currentIngredient.Process();
-            OnItemProcessed?.Invoke(currentIngredient);
         }
     }
 }

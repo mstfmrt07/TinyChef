@@ -13,11 +13,14 @@ MonoBehaviour:
   m_Name: Tomato Soup
   m_EditorClassIdentifier: 
   name: Tomato Soup
-  icon: {fileID: 0}
-  ingredients:
+  icon: {fileID: -657324776, guid: a70720f59f69a4cb09906709343c1619, type: 3}
+  requiredIngredients:
   - item: {fileID: 11400000, guid: cf9d166d5653d499081681107a818456, type: 2}
-    state: 2
+    targetState: 2
+    targetCookingType: 1
   - item: {fileID: 11400000, guid: cf9d166d5653d499081681107a818456, type: 2}
-    state: 2
+    targetState: 2
+    targetCookingType: 1
   - item: {fileID: 11400000, guid: cf9d166d5653d499081681107a818456, type: 2}
-    state: 2
+    targetState: 2
+    targetCookingType: 1
