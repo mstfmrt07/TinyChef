@@ -31,12 +31,18 @@ namespace TinyChef
         public virtual void Interact()
         {
             // Short press - pick up or put down
-            if (currentItem == null)
+            if (currentItem != null)
             {
-                TryPickUpItem();
+                // Counter has item - try to pick it up
+                // If picking up fails, try to put down item instead
+                if (!TryPickUpItem())
+                {
+                    TryPutDownItem();
+                }
             }
             else
             {
+                // Counter is empty - try to put down what chef is holding
                 TryPutDownItem();
             }
         }
@@ -105,22 +111,25 @@ namespace TinyChef
             }
         }
 
-        protected virtual void TryPickUpItem()
+        protected virtual bool TryPickUpItem()
         {
             Chef chef = FindObjectOfType<Chef>();
-            if (chef == null || chef.CurrentIngredient != null) return;
+            if (chef == null || chef.CurrentIngredient != null) return false;
 
             if (currentItem != null)
             {
                 chef.GrabItem(currentItem);
                 currentItem = null;
+                return true;
             }
+
+            return false;
         }
 
-        protected virtual void TryPutDownItem()
+        protected virtual bool TryPutDownItem()
         {
             Chef chef = FindObjectOfType<Chef>();
-            if (chef == null || chef.CurrentIngredient == null) return;
+            if (chef == null || chef.CurrentIngredient == null) return false;
 
             Ingredient ingredient = chef.CurrentIngredient;
             
@@ -133,10 +142,12 @@ namespace TinyChef
                     currentItem.transform.SetParent(itemPlacePoint);
                     currentItem.transform.localPosition = Vector3.zero;
                 }
+                return true;
             }
             else
             {
                 Debug.Log($"Cannot place {ingredient.data.name} on {counterType}");
+                return false;
             }
         }
 

@@ -22,10 +22,10 @@ namespace TinyChef
             return IsPlate(ingredient);
         }
 
-        protected override void TryPutDownItem()
+        protected override bool TryPutDownItem()
         {
             Chef chef = FindObjectOfType<Chef>();
-            if (chef == null || chef.CurrentIngredient == null) return;
+            if (chef == null || chef.CurrentIngredient == null) return false;
 
             Ingredient ingredient = chef.CurrentIngredient;
             
@@ -40,18 +40,22 @@ namespace TinyChef
                         chef.DropItem();
                         // Plate is consumed when served successfully
                         Destroy(ingredient.gameObject);
+                        return true;
                     }
                     else
                     {
                         Debug.Log("Wrong order or no matching order!");
+                        return false;
                     }
                 }
                 else
                 {
                     // Fallback: just place the item
-                    base.TryPutDownItem();
+                    return base.TryPutDownItem();
                 }
             }
+
+            return false;
         }
 
         protected override bool CanProcess(Ingredient ingredient)
