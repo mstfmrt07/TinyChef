@@ -15,3 +15,6 @@ MonoBehaviour:
   name: Tomato
   icon: {fileID: 1135691621, guid: 01eb5ccc9fc5345a0a43585318daf25d, type: 3}
   prefab: {fileID: 2920406732215978474, guid: f7d99ed31051249dcb1131cb03def963, type: 3}
+  allowedCookingTypes:
+  - cookingType: 1
+    duration: 5

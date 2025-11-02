@@ -75,6 +75,8 @@ MonoBehaviour:
   isProcessing: 0
   processProgress: 0
   defaultCookingType: 1
+  stoveUI: {fileID: 4330633967782265748}
+  ingredientPlacePoints: []
 --- !u!1 &7304044158618126949
 GameObject:
   m_ObjectHideFlags: 0
@@ -225,6 +227,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f0144d2a471874af48b3c1e23dd886b7, type: 3}
+--- !u!114 &4330633967782265748 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3143341166380064358, guid: f0144d2a471874af48b3c1e23dd886b7,
+    type: 3}
+  m_PrefabInstance: {fileID: 1695293568963649010}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45ff61e6e49f6443fbf253da803a9d20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6926646219544709225 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8621719881619264923, guid: f0144d2a471874af48b3c1e23dd886b7,
