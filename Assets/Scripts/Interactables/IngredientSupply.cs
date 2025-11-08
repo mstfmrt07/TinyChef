@@ -36,10 +36,21 @@ namespace TinyChef
 
             if (chef.CurrentItem == null)
             {
-                Supply(chef);
+                // Check if there's an item on top of the supply
+                if (currentItem != null)
+                {
+                    // Pick up the existing item instead of creating new supply
+                    TryPickUpItem();
+                }
+                else
+                {
+                    // No item on top, create new supply
+                    Supply(chef);
+                }
             }
             else
             {
+                // Chef is holding something, try to put it down
                 TryPutDownItem();
             }
         }

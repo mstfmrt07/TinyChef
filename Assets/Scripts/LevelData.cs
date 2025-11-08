@@ -10,6 +10,7 @@ namespace TinyChef
         [Header("Level Settings")]
         public string levelName;
         public GameObject levelPrefab;
+        public float levelDuration = 180f; // Duration in seconds (default: 3 minutes)
         public float durationBetweenOrders;
         public List<Order> availableOrders;
 

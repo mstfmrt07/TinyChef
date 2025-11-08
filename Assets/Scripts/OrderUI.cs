@@ -1,13 +1,14 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace TinyChef
 {
     public class OrderUI : MonoBehaviour
     {
         public Image orderImage;
-        public Text orderText;
+        public TextMeshProUGUI orderText;
         public Image timerImage;
         public Image ingredientPrefab;
         public Transform ingredientContainer;

@@ -9,9 +9,11 @@ namespace TinyChef
         public HighlightObject highlightObject;
         public Transform itemPlacePoint;
 
-        [Header("Processing Settings")] public float processTime = 2f;
+        [Header("Processing Settings")] 
+        public float processTime = 2f;
         public bool isProcessing = false;
         public float processProgress = 0f;
+        public ProcessingUI processingUI;
 
         protected IItem currentItem;
         public IItem CurrentItem => currentItem;
@@ -58,12 +60,29 @@ namespace TinyChef
         {
             if (item == null) return false;
 
-            // Special case: if counter has a plate, we can always try to add ingredients to it
+            // Check if item is a dirty plate - only dishwasher can accept dirty plates
+            if (IsPlate(item))
+            {
+                Plate plate = item.gameObject.GetComponent<Plate>();
+                if (plate != null && plate.IsDirty && counterType != CounterType.Dishwasher)
+                {
+                    return false; // Dirty plates can only go to dishwasher
+                }
+            }
+
+            // Special case: if counter has a plate, check what we're trying to place
             if (currentItem != null)
             {
-                Plate plate = currentItem.gameObject.GetComponent<Plate>();
-                if (plate != null)
+                Plate existingPlate = currentItem.gameObject.GetComponent<Plate>();
+                if (existingPlate != null)
                 {
+                    // If trying to place another plate, check if stacking is allowed
+                    if (IsPlate(item))
+                    {
+                        Plate incomingPlate = item.gameObject.GetComponent<Plate>();
+                        return existingPlate.CanStackPlate(incomingPlate);
+                    }
+                    
                     // Allow trying to add ingredient to plate (validation happens in TryPutDownItem)
                     // But only if the item being placed is an Ingredient
                     return item is Ingredient;
@@ -75,7 +94,10 @@ namespace TinyChef
             {
                 case CounterType.Dishwasher:
                     // Only plates can be placed in dishwasher
-                    return IsPlate(item);
+                    if (!IsPlate(item)) return false;
+                    
+                    // Dishwasher accepts both clean and dirty plates
+                    return true;
 
                 case CounterType.Stove:
                     // Only non-cooked ingredients can be placed (can't re-cook cooked items)
@@ -154,6 +176,20 @@ namespace TinyChef
 
             if (currentItem != null)
             {
+                // Check if current item is a plate with a stack
+                Plate plate = currentItem.gameObject.GetComponent<Plate>();
+                if (plate != null && plate.HasStack)
+                {
+                    // Take the top plate from the stack instead
+                    Plate topPlate = plate.TakeTopPlate();
+                    if (topPlate != null)
+                    {
+                        chef.GrabItem(topPlate);
+                        return true;
+                    }
+                }
+                
+                // Normal pickup
                 chef.GrabItem(currentItem);
                 currentItem = null;
                 return true;
@@ -169,30 +205,75 @@ namespace TinyChef
 
             IItem item = chef.CurrentItem;
 
-            // Check if counter has a plate - if so, try to add ingredient to plate
+            // Check if counter has a plate - if so, try to add ingredient or stack plate
             if (currentItem != null)
             {
-                Plate plate = currentItem.gameObject.GetComponent<Plate>();
-                if (plate != null && item is Ingredient ingredient)
+                Plate existingPlate = currentItem.gameObject.GetComponent<Plate>();
+                if (existingPlate != null)
                 {
-                    // Try to add ingredient to plate
-                    LevelController levelController = FindObjectOfType<LevelController>();
-                    LevelData levelData = levelController != null ? levelController.CurrentLevelData : null;
-
-                    if (levelData != null && plate.TryAddIngredient(ingredient, levelData))
+                    // Check if trying to stack another plate
+                    if (IsPlate(item))
                     {
-                        chef.DropItem();
-                        // Ingredient is now parented to plate, so we don't need to manage it here
-                        return true;
-                    }
-                    else
-                    {
-                        if (ingredient.data != null)
+                        Plate incomingPlate = item.gameObject.GetComponent<Plate>();
+                        if (incomingPlate != null && existingPlate.TryStackPlate(incomingPlate))
                         {
-                            Debug.Log($"Cannot add {ingredient.data.name} to plate - doesn't match any recipe requirement");
+                            chef.DropItem();
+                            // Plate is now stacked, so we don't need to manage it separately
+                            return true;
                         }
-
                         return false;
+                    }
+                    
+                    // Try to add ingredient to plate
+                    if (item is Ingredient ingredient)
+                    {
+                        LevelController levelController = FindObjectOfType<LevelController>();
+                        LevelData levelData = levelController != null ? levelController.CurrentLevelData : null;
+
+                        if (levelData != null && existingPlate.TryAddIngredient(ingredient, levelData))
+                        {
+                            chef.DropItem();
+                            // Ingredient is now parented to plate, currentItem remains the plate
+                            return true;
+                        }
+                        else
+                        {
+                            if (ingredient.data != null)
+                            {
+                                Debug.Log($"Cannot add {ingredient.data.name} to plate - doesn't match any recipe requirement");
+                            }
+
+                            return false;
+                        }
+                    }
+                }
+                
+                // Check if currentItem is an ingredient and we're placing a plate on it
+                if (currentItem is Ingredient existingIngredient && IsPlate(item))
+                {
+                    Plate incomingPlate = item.gameObject.GetComponent<Plate>();
+                    if (incomingPlate != null)
+                    {
+                        LevelController levelController = FindObjectOfType<LevelController>();
+                        LevelData levelData = levelController != null ? levelController.CurrentLevelData : null;
+
+                        if (levelData != null && incomingPlate.TryAddIngredient(existingIngredient, levelData))
+                        {
+                            chef.DropItem();
+                            // Ingredient is now on plate, set plate as currentItem
+                            currentItem = incomingPlate;
+                            if (itemPlacePoint != null)
+                            {
+                                incomingPlate.transform.SetParent(itemPlacePoint);
+                                incomingPlate.transform.localPosition = Vector3.zero;
+                            }
+                            return true;
+                        }
+                        else
+                        {
+                            Debug.Log($"Cannot add ingredient to plate - doesn't match any recipe requirement");
+                            return false;
+                        }
                     }
                 }
             }
@@ -226,6 +307,14 @@ namespace TinyChef
             if (isProcessing) return;
             isProcessing = true;
             processProgress = 0f;
+            
+            // Show processing UI
+            if (processingUI != null)
+            {
+                processingUI.SetVisible(true);
+                processingUI.UpdateProgress(0f);
+            }
+            
             StartCoroutine(ProcessCoroutine());
         }
 
@@ -234,6 +323,13 @@ namespace TinyChef
             while (processProgress < 1f && currentItem != null)
             {
                 processProgress += Time.deltaTime / processTime;
+                
+                // Update processing UI
+                if (processingUI != null)
+                {
+                    processingUI.UpdateProgress(processProgress);
+                }
+                
                 yield return null;
             }
 
@@ -244,6 +340,12 @@ namespace TinyChef
 
             isProcessing = false;
             processProgress = 0f;
+            
+            // Hide processing UI
+            if (processingUI != null)
+            {
+                processingUI.SetVisible(false);
+            }
         }
 
         protected virtual void ExecuteProcess()

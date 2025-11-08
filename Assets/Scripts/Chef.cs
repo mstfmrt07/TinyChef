@@ -157,6 +157,12 @@ namespace TinyChef
         {
             if (!canInteract) return;
 
+            // Don't allow interaction if level is not active
+            if (levelController != null && !levelController.IsLevelActive)
+            {
+                return;
+            }
+
             if (currentSelection != null)
             {
                 if (currentSelection is BaseCounter counter)
@@ -175,6 +181,12 @@ namespace TinyChef
 
         private void HandleLongInteract()
         {
+            // Don't allow interaction if level is not active
+            if (levelController != null && !levelController.IsLevelActive)
+            {
+                return;
+            }
+
             if (currentSelection != null && currentSelection is BaseCounter counter)
             {
                 counter.Process();
@@ -196,6 +208,7 @@ namespace TinyChef
             {
                 currentItem.transform.SetParent(grabPoint);
                 currentItem.transform.localPosition = Vector3.zero;
+                currentItem.transform.localRotation = Quaternion.identity;
             }
         }
 

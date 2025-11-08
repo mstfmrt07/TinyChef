@@ -87,6 +87,16 @@ namespace TinyChef
 
         private void Update()
         {
+            // If no ingredients at all, make sure cooking is stopped
+            if (ingredients.Count == 0)
+            {
+                if (isCooking)
+                {
+                    StopCooking();
+                }
+                return;
+            }
+
             // Check if there are any uncooked ingredients
             bool hasUncookedIngredients = ingredients.Any(i => i.State != IngredientState.Cooked);
             
@@ -387,49 +397,51 @@ namespace TinyChef
             Chef chef = FindObjectOfType<Chef>();
             if (chef == null || chef.CurrentItem != null) return false;
 
-            // Only pick up cooked ingredients
-            if (ingredients.Count > 0)
+            if (ingredients.Count == 0) return false;
+
+            // Check if ALL ingredients are cooked (in target state)
+            bool allCooked = ingredients.All(i => i.State == IngredientState.Cooked);
+
+            if (!allCooked)
             {
-                // Find cooked ingredients only
-                Ingredient itemToPick = ingredients.FirstOrDefault(i => i.State == IngredientState.Cooked);
+                // Some ingredients are still cooking, cannot pick up yet
+                Debug.Log("StoveCounter: Cannot pick up - some ingredients are still cooking!");
+                return false;
+            }
 
-                if (itemToPick != null)
+            // All ingredients are cooked, pick up one
+            Ingredient itemToPick = ingredients.FirstOrDefault(i => i.State == IngredientState.Cooked);
+
+            if (itemToPick != null)
+            {
+                chef.GrabItem(itemToPick);
+                ingredients.Remove(itemToPick);
+                ingredientCookingDefs.Remove(itemToPick);
+                ingredientStartTimes.Remove(itemToPick);
+
+                // Recalculate if still cooking
+                if (ingredients.Count > 0)
                 {
-                    chef.GrabItem(itemToPick);
-                    ingredients.Remove(itemToPick);
-                    ingredientCookingDefs.Remove(itemToPick);
-                    ingredientStartTimes.Remove(itemToPick);
-
-                    // Recalculate if still cooking
-                    if (ingredients.Count > 0)
-                    {
-                        RecalculateTotalCookingTime();
-                        // Adjust start times for remaining ingredients
-                        AdjustStartTimes();
-                        
-                        // Check if we should stop cooking (no more uncooked ingredients)
-                        bool hasUncookedIngredients = ingredients.Any(i => i.State != IngredientState.Cooked);
-                        if (!hasUncookedIngredients)
-                        {
-                            StopCooking();
-                        }
-                    }
-                    else
+                    RecalculateTotalCookingTime();
+                    // Adjust start times for remaining ingredients
+                    AdjustStartTimes();
+                    
+                    // Check if we should stop cooking (no more uncooked ingredients)
+                    bool hasUncookedIngredients = ingredients.Any(i => i.State != IngredientState.Cooked);
+                    if (!hasUncookedIngredients)
                     {
                         StopCooking();
                     }
-
-                    // Update UI visibility
-                    UpdateUIVisibility();
-
-                    return true;
                 }
                 else
                 {
-                    // No cooked ingredients available
-                    Debug.Log("Ingredients are still cooking, cannot pick up yet.");
-                    return false;
+                    StopCooking();
                 }
+
+                // Update UI visibility
+                UpdateUIVisibility();
+
+                return true;
             }
 
             return false;

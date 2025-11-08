@@ -27,5 +27,14 @@ namespace TinyChef
                 itemPlacePoint = transform;
             }
         }
+
+        private void Start()
+        {
+            // Initialize processing UI if present
+            if (processingUI != null)
+            {
+                processingUI.Initialize(this);
+            }
+        }
     }
 }

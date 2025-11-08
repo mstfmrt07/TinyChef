@@ -9,11 +9,24 @@ namespace TinyChef
     /// </summary>
     public class Plate : MonoBehaviour, IItem
     {
+        [Header("Plate Visual Settings")]
+        public MeshRenderer plateRenderer;
+        public Material cleanMaterial;
+        public Material dirtyMaterial;
+
+        [Header("Stacking Settings")]
+        public float stackOffset = 0.05f; // Vertical offset for stacked plates
+
         private List<Ingredient> ingredients = new List<Ingredient>();
+        private bool isDirty = false;
+        private List<Plate> stackedPlates = new List<Plate>(); // Plates stacked on top of this one
 
         public List<Ingredient> Ingredients => new List<Ingredient>(ingredients);
         public int IngredientCount => ingredients.Count;
         public bool IsEmpty => ingredients.Count == 0;
+        public bool IsDirty => isDirty;
+        public int StackCount => stackedPlates.Count;
+        public bool HasStack => stackedPlates.Count > 0;
 
         /// <summary>
         /// Checks if an ingredient can be added to this plate based on level recipes
@@ -22,6 +35,7 @@ namespace TinyChef
         {
             if (ingredient == null || levelData == null) return false;
             if (ingredients.Contains(ingredient)) return false; // Already in plate
+            if (isDirty) return false; // Can't add ingredients to dirty plates
 
             // Check if ingredient matches any recipe requirement in the level
             if (levelData.availableOrders == null || levelData.availableOrders.Count == 0)
@@ -119,6 +133,102 @@ namespace TinyChef
                 }
             }
             ingredients.Clear();
+        }
+
+        /// <summary>
+        /// Makes the plate dirty (after serving)
+        /// </summary>
+        public void MakeDirty()
+        {
+            isDirty = true;
+            UpdateVisual();
+        }
+
+        /// <summary>
+        /// Cleans the plate (in dishwasher)
+        /// </summary>
+        public void Clean()
+        {
+            isDirty = false;
+            UpdateVisual();
+        }
+
+        /// <summary>
+        /// Updates the visual appearance based on dirty state
+        /// </summary>
+        private void UpdateVisual()
+        {
+            if (plateRenderer != null)
+            {
+                if (isDirty && dirtyMaterial != null)
+                {
+                    plateRenderer.material = dirtyMaterial;
+                }
+                else if (!isDirty && cleanMaterial != null)
+                {
+                    plateRenderer.material = cleanMaterial;
+                }
+            }
+        }
+
+        private void Start()
+        {
+            // Initialize visual on start
+            UpdateVisual();
+        }
+
+        /// <summary>
+        /// Checks if a plate can be stacked on top of this plate
+        /// </summary>
+        public bool CanStackPlate(Plate otherPlate)
+        {
+            if (otherPlate == null) return false;
+            if (!IsEmpty) return false; // Can only stack on empty plates
+            if (!otherPlate.IsEmpty) return false; // Can only stack empty plates
+            
+            // Both must be the same type (both clean or both dirty)
+            return isDirty == otherPlate.IsDirty;
+        }
+
+        /// <summary>
+        /// Adds a plate to the stack
+        /// </summary>
+        public bool TryStackPlate(Plate otherPlate)
+        {
+            if (!CanStackPlate(otherPlate)) return false;
+
+            stackedPlates.Add(otherPlate);
+            
+            // Position the plate in the stack
+            otherPlate.transform.SetParent(transform);
+            otherPlate.transform.localPosition = Vector3.up * stackOffset * stackedPlates.Count;
+            otherPlate.transform.localRotation = Quaternion.identity;
+            
+            return true;
+        }
+
+        /// <summary>
+        /// Removes and returns the top plate from the stack
+        /// </summary>
+        public Plate TakeTopPlate()
+        {
+            if (stackedPlates.Count == 0) return null;
+
+            Plate topPlate = stackedPlates[stackedPlates.Count - 1];
+            stackedPlates.RemoveAt(stackedPlates.Count - 1);
+            
+            topPlate.transform.SetParent(null);
+            
+            return topPlate;
+        }
+
+        /// <summary>
+        /// Gets the top plate without removing it
+        /// </summary>
+        public Plate PeekTopPlate()
+        {
+            if (stackedPlates.Count == 0) return null;
+            return stackedPlates[stackedPlates.Count - 1];
         }
     }
 }

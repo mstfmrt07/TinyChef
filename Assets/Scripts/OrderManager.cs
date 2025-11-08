@@ -46,6 +46,12 @@ namespace TinyChef
 
         private void Update()
         {
+            // Only update orders if level is active
+            if (levelController != null && !levelController.IsLevelActive)
+            {
+                return;
+            }
+
             // Update active orders
             for (int i = activeOrders.Count - 1; i >= 0; i--)
             {
@@ -76,6 +82,8 @@ namespace TinyChef
             currentLevelData = levelData;
             ClearAllOrders();
             orderGenerationTimer = 0f;
+            totalScore = 0;
+            OnScoreChanged?.Invoke(totalScore);
         }
 
         private void GenerateNewOrder()
@@ -116,17 +124,32 @@ namespace TinyChef
 
         public bool TryServeOrder(IItem dish)
         {
-            if (dish == null) return false;
+            if (dish == null)
+            {
+                Debug.Log("OrderManager: Dish is null");
+                return false;
+            }
+
+            Debug.Log($"OrderManager: TryServeOrder called with {dish.gameObject.name}");
 
             // Check if dish is a plate with ingredients
             List<Ingredient> dishIngredients = ExtractIngredientsFromDish(dish);
 
             if (dishIngredients == null || dishIngredients.Count == 0)
             {
+                Debug.Log("OrderManager: No ingredients found on plate");
                 // Wrong order - not a valid dish
                 ApplyWrongOrderPenalty();
                 return false;
             }
+
+            Debug.Log($"OrderManager: Found {dishIngredients.Count} ingredients on plate");
+            foreach (var ing in dishIngredients)
+            {
+                Debug.Log($"  - {ing.data.name}: State={ing.State}, CookingType={ing.CookingType}");
+            }
+
+            Debug.Log($"OrderManager: Active orders count: {activeOrders.Count}");
 
             // Try to find matching order
             Order matchingOrder = activeOrders.FirstOrDefault(order =>
@@ -135,6 +158,7 @@ namespace TinyChef
             if (matchingOrder != null)
             {
                 // Correct order!
+                Debug.Log($"OrderManager: Found matching order for recipe: {matchingOrder.recipe.name}");
                 matchingOrder.Complete();
                 int score = matchingOrder.CalculateScore(baseOrderScore);
                 AddScore(score);
@@ -144,6 +168,17 @@ namespace TinyChef
             }
             else
             {
+                Debug.Log("OrderManager: No matching order found");
+                // Log what each active order needs
+                foreach (var order in activeOrders)
+                {
+                    Debug.Log($"  Order {order.recipe.name} requires:");
+                    foreach (var req in order.recipe.requiredIngredients)
+                    {
+                        Debug.Log($"    - {req.item.name}: {req.targetState}, {req.targetCookingType}");
+                    }
+                }
+                
                 // Wrong order - doesn't match any active order
                 ApplyWrongOrderPenalty();
                 OnWrongOrderServed?.Invoke(null);

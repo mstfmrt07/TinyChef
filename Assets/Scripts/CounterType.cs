@@ -7,6 +7,7 @@ namespace TinyChef
         CuttingBoard,   // For chopping/processing
         Stove,          // For cooking (boiling, baking, frying)
         Dishwasher,     // For washing plates
-        ServingStation  // For serving completed dishes
+        ServingStation, // For serving completed dishes
+        WasteBin        // For disposing unwanted items
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace TinyChef
@@ -16,11 +17,14 @@ namespace TinyChef
 
         private Level currentLevelInstance;
         private LevelData currentLevelData;
+        private float levelTimeRemaining;
+        private bool isLevelActive = false;
 
         // Events
         public Action<LevelData> OnLevelLoaded;
         public Action<int> OnLevelCompleted; // Passes star rating (1-3)
         public Action OnLevelFailed;
+        public Action<float> OnLevelTimeChanged; // Passes time remaining
 
         // Public getters
         public LevelData CurrentLevelData => currentLevelData;
@@ -36,6 +40,21 @@ namespace TinyChef
                 return new List<BaseCounter>();
             }
         }
+
+        public bool HasDishwasher
+        {
+            get
+            {
+                if (currentLevelInstance != null)
+                {
+                    return currentLevelInstance.GetCounters().Any(c => c.counterType == CounterType.Dishwasher);
+                }
+                return false;
+            }
+        }
+
+        public float LevelTimeRemaining => levelTimeRemaining;
+        public bool IsLevelActive => isLevelActive;
 
         private void Awake()
         {
@@ -56,6 +75,21 @@ namespace TinyChef
             if (levels != null && levels.Count > 0)
             {
                 LoadLevel(currentLevelIndex);
+            }
+        }
+
+        private void Update()
+        {
+            if (isLevelActive && currentLevelData != null)
+            {
+                levelTimeRemaining -= Time.deltaTime;
+                OnLevelTimeChanged?.Invoke(levelTimeRemaining);
+
+                if (levelTimeRemaining <= 0f)
+                {
+                    levelTimeRemaining = 0f;
+                    EndLevel();
+                }
             }
         }
 
@@ -101,7 +135,20 @@ namespace TinyChef
                 orderManager.SetLevelData(currentLevelData);
             }
 
+            // Initialize level timer but don't start yet
+            levelTimeRemaining = currentLevelData.levelDuration;
+            isLevelActive = false; // Wait for StartLevel() to be called
+
             OnLevelLoaded?.Invoke(currentLevelData);
+        }
+
+        public void StartLevel()
+        {
+            if (currentLevelData == null) return;
+            
+            // Start the level
+            isLevelActive = true;
+            levelTimeRemaining = currentLevelData.levelDuration;
         }
 
         private void UnloadCurrentLevel()
@@ -115,18 +162,33 @@ namespace TinyChef
 
         public void CheckLevelCompletion(int currentScore)
         {
+            // This method is now just for checking thresholds during gameplay
+            // Actual level completion is handled by EndLevel when timer runs out
             if (currentLevelData == null) return;
 
             int starRating = GetStarRating(currentScore);
             
-            if (starRating >= 1)
+            // Just notify about progress, don't end level yet
+            // Level ends when timer runs out
+        }
+
+        private void EndLevel()
+        {
+            if (!isLevelActive) return;
+
+            isLevelActive = false;
+
+            // Get final score from OrderManager
+            int finalScore = 0;
+            if (orderManager != null)
             {
-                OnLevelCompleted?.Invoke(starRating);
-                Debug.Log($"Level completed with {starRating} star(s)! Score: {currentScore}");
-                
-                // Optionally auto-advance to next level
-                // LoadNextLevel();
+                finalScore = orderManager.GetTotalScore();
             }
+
+            int starRating = GetStarRating(finalScore);
+            
+            Debug.Log($"Level ended! Final score: {finalScore}, Stars: {starRating}");
+            OnLevelCompleted?.Invoke(starRating);
         }
 
         public int GetStarRating(int score)
