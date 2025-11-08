@@ -9,9 +9,9 @@ namespace TinyChef
 
         protected override void ExecuteProcess()
         {
-            base.ExecuteProcess();
             if (currentItem is Ingredient ingredient)
             {
+                ingredient.Process();
                 OnItemProcessed?.Invoke(ingredient);
             }
         }

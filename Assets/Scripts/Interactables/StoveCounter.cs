@@ -7,8 +7,7 @@ namespace TinyChef
 {
     public class StoveCounter : BaseCounter
     {
-        [Header("Stove Settings")]
-        public CookingType defaultCookingType = CookingType.Boiled;
+        [Header("Stove Settings")] public CookingType defaultCookingType = CookingType.Boiled;
         public StoveUI stoveUI;
 
         public Action<Ingredient> OnItemCooked;
@@ -17,33 +16,27 @@ namespace TinyChef
 
         private List<Ingredient> ingredients = new List<Ingredient>();
         private bool isCooking = false;
+        private bool isPaused = false; // Paused when all current ingredients are cooked but waiting for more
         private float totalCookingTime = 0f;
         private float currentCookingTime = 0f;
+        private float elapsedTimeBeforePause = 0f; // Track time elapsed before pausing
         private Dictionary<Ingredient, CookingTypeDefinition> ingredientCookingDefs = new Dictionary<Ingredient, CookingTypeDefinition>();
         private Dictionary<Ingredient, float> ingredientStartTimes = new Dictionary<Ingredient, float>();
 
         public List<Ingredient> GetIngredients() => new List<Ingredient>(ingredients);
         public bool IsCooking => isCooking;
+
         public float GetCookingProgress()
         {
-            if (!isCooking || ingredients.Count == 0) return 0f;
-            
-            // Calculate remaining total time for uncooked ingredients only
-            float remainingTime = 0f;
-            foreach (var ingredient in ingredients)
-            {
-                // Only count uncooked ingredients
-                if (ingredient.State != IngredientState.Cooked && ingredientCookingDefs.ContainsKey(ingredient))
-                {
-                    remainingTime += ingredientCookingDefs[ingredient].duration;
-                }
-            }
-            
-            if (remainingTime <= 0f || totalCookingTime <= 0f) return 1f;
-            
-            // Calculate completed time
-            float completedTime = totalCookingTime - remainingTime;
-            return Mathf.Clamp01(completedTime / totalCookingTime);
+            if (!isCooking || totalCookingTime <= 0f) return 0f;
+
+            // Calculate elapsed time (including paused time)
+            float elapsedTime = isPaused ? elapsedTimeBeforePause : currentCookingTime;
+
+            // Calculate progress based on elapsed time vs total time
+            // This shows overall progress of all ingredients
+            float progress = Mathf.Clamp01(elapsedTime / totalCookingTime);
+            return progress;
         }
 
         private void Awake()
@@ -94,15 +87,28 @@ namespace TinyChef
 
         private void Update()
         {
-            // Update cooking if there are uncooked ingredients
+            // Check if there are any uncooked ingredients
             bool hasUncookedIngredients = ingredients.Any(i => i.State != IngredientState.Cooked);
+            
             if (hasUncookedIngredients)
             {
+                // Resume cooking if it was paused
+                if (isPaused)
+                {
+                    ResumeCooking();
+                }
+
                 if (!isCooking)
                 {
                     StartCooking();
                 }
+
                 UpdateCooking();
+            }
+            else if (isCooking && !isPaused)
+            {
+                // All current ingredients are cooked, but keep isCooking true and pause
+                PauseCooking();
             }
         }
 
@@ -112,7 +118,7 @@ namespace TinyChef
             if (chef == null || chef.CurrentItem == null) return false;
 
             IItem item = chef.CurrentItem;
-            
+
             // Stove only accepts ingredients, not plates
             if (!(item is Ingredient ingredient)) return false;
 
@@ -138,12 +144,12 @@ namespace TinyChef
         protected override bool CanPlaceItem(IItem item)
         {
             if (item == null) return false;
-            
+
             // Stove only accepts ingredients, not plates
             if (!(item is Ingredient ingredient)) return false;
-            
+
             if (ingredient.data == null) return false;
-            
+
             // Can't place already cooked items
             if (ingredient.State == IngredientState.Cooked) return false;
 
@@ -155,13 +161,38 @@ namespace TinyChef
         {
             if (ingredient == null || ingredient.data == null) return;
 
-            // Calculate start time for this ingredient (cumulative of all previous ingredients)
+            // Calculate start time for this ingredient
             float startTime = 0f;
-            foreach (var ing in ingredients)
+            
+            if (isCooking)
             {
-                if (ingredientCookingDefs.ContainsKey(ing))
+                // If we're cooking (or paused), new ingredient starts after all currently cooking ingredients finish
+                float maxEndTime = 0f;
+                float currentElapsed = isPaused ? elapsedTimeBeforePause : currentCookingTime;
+                
+                foreach (var ing in ingredients)
                 {
-                    startTime += ingredientCookingDefs[ing].duration;
+                    if (ingredientCookingDefs.ContainsKey(ing) && ing.State != IngredientState.Cooked)
+                    {
+                        float ingStartTime = ingredientStartTimes.ContainsKey(ing) ? ingredientStartTimes[ing] : 0f;
+                        float ingDuration = ingredientCookingDefs[ing].duration;
+                        float ingEndTime = ingStartTime + ingDuration;
+                        maxEndTime = Mathf.Max(maxEndTime, ingEndTime);
+                    }
+                }
+                
+                // New ingredient starts at the maximum end time, or current elapsed time if nothing is cooking
+                startTime = Mathf.Max(maxEndTime, currentElapsed);
+            }
+            else
+            {
+                // Calculate start time for this ingredient (cumulative of all previous uncooked ingredients)
+                foreach (var ing in ingredients)
+                {
+                    if (ingredientCookingDefs.ContainsKey(ing) && ing.State != IngredientState.Cooked)
+                    {
+                        startTime += ingredientCookingDefs[ing].duration;
+                    }
                 }
             }
 
@@ -186,6 +217,11 @@ namespace TinyChef
             {
                 StartCooking();
             }
+            else if (isPaused)
+            {
+                // Resume cooking when new ingredient is added
+                ResumeCooking();
+            }
 
             // Update UI visibility
             UpdateUIVisibility();
@@ -205,14 +241,21 @@ namespace TinyChef
         private void RecalculateTotalCookingTime()
         {
             totalCookingTime = 0f;
+            float maxEndTime = 0f;
+            
             foreach (var ingredient in ingredients)
             {
                 // Only count uncooked ingredients for total cooking time
                 if (ingredientCookingDefs.ContainsKey(ingredient) && ingredient.State != IngredientState.Cooked)
                 {
-                    totalCookingTime += ingredientCookingDefs[ingredient].duration;
+                    float startTime = ingredientStartTimes.ContainsKey(ingredient) ? ingredientStartTimes[ingredient] : 0f;
+                    float duration = ingredientCookingDefs[ingredient].duration;
+                    float endTime = startTime + duration;
+                    maxEndTime = Mathf.Max(maxEndTime, endTime);
                 }
             }
+            
+            totalCookingTime = maxEndTime;
         }
 
         private void AdjustStartTimes()
@@ -234,27 +277,38 @@ namespace TinyChef
             if (ingredients.Count == 0) return;
 
             isCooking = true;
+            isPaused = false;
             currentCookingTime = 0f;
+            elapsedTimeBeforePause = 0f;
+            RecalculateTotalCookingTime();
             OnCookingStarted?.Invoke();
+        }
+
+        private void PauseCooking()
+        {
+            if (!isCooking) return;
+            
+            isPaused = true;
+            elapsedTimeBeforePause = currentCookingTime;
+            // Keep isCooking = true, just pause the timer
+        }
+
+        private void ResumeCooking()
+        {
+            if (!isCooking || !isPaused) return;
+            
+            isPaused = false;
+            // currentCookingTime continues from where it was paused
+            // No need to reset it
         }
 
         private void UpdateCooking()
         {
-            // Check if there are any uncooked ingredients
-            bool hasUncookedIngredients = ingredients.Any(i => i.State != IngredientState.Cooked);
-            
-            if (!hasUncookedIngredients)
+            // Only update timer if not paused
+            if (!isPaused)
             {
-                // All ingredients are cooked - stop the cooking timer
-                if (isCooking)
-                {
-                    StopCooking();
-                    OnCookingCompleted?.Invoke();
-                }
-                return;
+                currentCookingTime += Time.deltaTime;
             }
-
-            currentCookingTime += Time.deltaTime;
 
             // Check which ingredients are done based on their start times
             List<Ingredient> finishedIngredients = new List<Ingredient>();
@@ -262,14 +316,15 @@ namespace TinyChef
             foreach (var ingredient in ingredients.ToList())
             {
                 // Only check uncooked ingredients
-                if (ingredient.State != IngredientState.Cooked && 
-                    ingredientCookingDefs.ContainsKey(ingredient) && 
+                if (ingredient.State != IngredientState.Cooked &&
+                    ingredientCookingDefs.ContainsKey(ingredient) &&
                     ingredientStartTimes.ContainsKey(ingredient))
                 {
                     float startTime = ingredientStartTimes[ingredient];
                     float duration = ingredientCookingDefs[ingredient].duration;
-                    
-                    if (currentCookingTime >= startTime + duration)
+                    float elapsedTime = isPaused ? elapsedTimeBeforePause : currentCookingTime;
+
+                    if (elapsedTime >= startTime + duration)
                     {
                         // This ingredient is done
                         finishedIngredients.Add(ingredient);
@@ -288,12 +343,14 @@ namespace TinyChef
         {
             if (ingredient == null) return;
 
+            // Get the cooking type from the stored definition
             CookingType cookingType = defaultCookingType;
             if (ingredientCookingDefs.ContainsKey(ingredient))
             {
                 cookingType = ingredientCookingDefs[ingredient].cookingType;
             }
 
+            // Call Cook with the appropriate cooking type
             ingredient.Cook(cookingType);
             OnItemCooked?.Invoke(ingredient);
 
@@ -304,15 +361,23 @@ namespace TinyChef
 
             // Recalculate total time for remaining uncooked ingredients
             RecalculateTotalCookingTime();
+            
+            // Check if all ingredients are now cooked - Update() will handle pausing
         }
 
         private void StopCooking()
         {
-            isCooking = false;
-            currentCookingTime = 0f;
-            totalCookingTime = 0f;
-            ingredientStartTimes.Clear();
+            // Only stop cooking when there are no more ingredients or all are cooked and picked up
+            bool hasUncookedIngredients = ingredients.Any(i => i.State != IngredientState.Cooked);
+            if (hasUncookedIngredients) return; // Don't stop if there are uncooked ingredients
             
+            isCooking = false;
+            isPaused = false;
+            currentCookingTime = 0f;
+            elapsedTimeBeforePause = 0f;
+            totalCookingTime = 0f;
+            OnCookingCompleted?.Invoke();
+
             // Update UI visibility when cooking stops
             UpdateUIVisibility();
         }
@@ -334,13 +399,20 @@ namespace TinyChef
                     ingredients.Remove(itemToPick);
                     ingredientCookingDefs.Remove(itemToPick);
                     ingredientStartTimes.Remove(itemToPick);
-                    
+
                     // Recalculate if still cooking
                     if (ingredients.Count > 0)
                     {
                         RecalculateTotalCookingTime();
                         // Adjust start times for remaining ingredients
                         AdjustStartTimes();
+                        
+                        // Check if we should stop cooking (no more uncooked ingredients)
+                        bool hasUncookedIngredients = ingredients.Any(i => i.State != IngredientState.Cooked);
+                        if (!hasUncookedIngredients)
+                        {
+                            StopCooking();
+                        }
                     }
                     else
                     {
@@ -349,7 +421,7 @@ namespace TinyChef
 
                     // Update UI visibility
                     UpdateUIVisibility();
-                    
+
                     return true;
                 }
                 else

@@ -248,32 +248,6 @@ namespace TinyChef
 
         protected virtual void ExecuteProcess()
         {
-            if (currentItem == null) return;
-
-            switch (counterType)
-            {
-                case CounterType.CuttingBoard:
-                    if (currentItem is Ingredient ingredient)
-                    {
-                        ingredient.Process();
-                    }
-
-                    break;
-
-                case CounterType.Stove:
-                    // Default cooking type, can be overridden in StoveCounter
-                    if (currentItem is Ingredient ingredient2)
-                    {
-                        ingredient2.Cook(CookingType.Boiled);
-                    }
-
-                    break;
-
-                case CounterType.Dishwasher:
-                    // Wash plate logic
-                    Debug.Log("Plate washed");
-                    break;
-            }
         }
 
         protected virtual bool IsPlate(IItem item)
