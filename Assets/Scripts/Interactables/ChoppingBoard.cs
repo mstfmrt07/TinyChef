@@ -10,7 +10,10 @@ namespace TinyChef
         protected override void ExecuteProcess()
         {
             base.ExecuteProcess();
-            OnItemProcessed?.Invoke(currentItem);
+            if (currentItem is Ingredient ingredient)
+            {
+                OnItemProcessed?.Invoke(ingredient);
+            }
         }
 
         private void Awake()

@@ -34,7 +34,7 @@ namespace TinyChef
             Chef chef = FindObjectOfType<Chef>();
             if (chef == null) return;
 
-            if (chef.CurrentIngredient == null)
+            if (chef.CurrentItem == null)
             {
                 Supply(chef);
             }
@@ -56,7 +56,7 @@ namespace TinyChef
             chef.GrabItem(newIngredient);
         }
 
-        protected override bool CanPlaceItem(Ingredient ingredient)
+        protected override bool CanPlaceItem(IItem item)
         {
             // Can place items back on supply counter
             return true;

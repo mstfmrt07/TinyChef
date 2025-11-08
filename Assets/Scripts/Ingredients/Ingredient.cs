@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace TinyChef
 {
-    public class Ingredient : MonoBehaviour
+    public class Ingredient : MonoBehaviour, IItem
     {
         public IngredientData data;
         public GameObject rawModel;
@@ -34,7 +34,7 @@ namespace TinyChef
             }
         }
 
-        public void Cook(CookingType type = CookingType.Boiled)
+        public void Cook(CookingType type)
         {
             if (state != IngredientState.Cooked)
             {

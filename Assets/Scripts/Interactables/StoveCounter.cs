@@ -61,7 +61,7 @@ namespace TinyChef
             Chef chef = FindObjectOfType<Chef>();
             if (chef == null) return;
 
-            if (chef.CurrentIngredient == null)
+            if (chef.CurrentItem == null)
             {
                 // Try to pick up an ingredient from the stove
                 TryPickUpItem();
@@ -109,11 +109,14 @@ namespace TinyChef
         protected override bool TryPutDownItem()
         {
             Chef chef = FindObjectOfType<Chef>();
-            if (chef == null || chef.CurrentIngredient == null) return false;
+            if (chef == null || chef.CurrentItem == null) return false;
 
-            Ingredient ingredient = chef.CurrentIngredient;
+            IItem item = chef.CurrentItem;
+            
+            // Stove only accepts ingredients, not plates
+            if (!(item is Ingredient ingredient)) return false;
 
-            if (CanPlaceItem(ingredient))
+            if (CanPlaceItem(item))
             {
                 // Check if ingredient can be cooked with default cooking type
                 if (ingredient.data != null && ingredient.data.IsCookingTypeAllowed(defaultCookingType))
@@ -132,9 +135,14 @@ namespace TinyChef
             return false;
         }
 
-        protected override bool CanPlaceItem(Ingredient ingredient)
+        protected override bool CanPlaceItem(IItem item)
         {
-            if (ingredient == null || ingredient.data == null) return false;
+            if (item == null) return false;
+            
+            // Stove only accepts ingredients, not plates
+            if (!(item is Ingredient ingredient)) return false;
+            
+            if (ingredient.data == null) return false;
             
             // Can't place already cooked items
             if (ingredient.State == IngredientState.Cooked) return false;
@@ -312,7 +320,7 @@ namespace TinyChef
         protected override bool TryPickUpItem()
         {
             Chef chef = FindObjectOfType<Chef>();
-            if (chef == null || chef.CurrentIngredient != null) return false;
+            if (chef == null || chef.CurrentItem != null) return false;
 
             // Only pick up cooked ingredients
             if (ingredients.Count > 0)
@@ -355,7 +363,7 @@ namespace TinyChef
             return false;
         }
 
-        protected override bool CanProcess(Ingredient ingredient)
+        protected override bool CanProcess(IItem item)
         {
             // Stove processes automatically when ingredients are placed
             return false;

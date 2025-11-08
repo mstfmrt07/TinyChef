@@ -114,13 +114,11 @@ namespace TinyChef
             }
         }
 
-        public bool TryServeOrder(Ingredient dish)
+        public bool TryServeOrder(IItem dish)
         {
             if (dish == null) return false;
 
             // Check if dish is a plate with ingredients
-            // For now, we'll assume we can extract ingredients from the dish
-            // You may need to add a Plate component that holds ingredients
             List<Ingredient> dishIngredients = ExtractIngredientsFromDish(dish);
 
             if (dishIngredients == null || dishIngredients.Count == 0)
@@ -153,21 +151,19 @@ namespace TinyChef
             }
         }
 
-        private List<Ingredient> ExtractIngredientsFromDish(Ingredient dish)
+        private List<Ingredient> ExtractIngredientsFromDish(IItem dish)
         {
             if (dish == null) return null;
 
-            // Check if the dish itself is a plate
-            Plate plate = dish.GetComponent<Plate>();
+            // Check if the dish is a plate
+            Plate plate = dish.gameObject.GetComponent<Plate>();
             if (plate != null)
             {
                 return plate.Ingredients;
             }
 
-            // If not a plate, check if it's a single ingredient dish
-            // For single ingredient recipes, we return a list with just this ingredient
-            Ingredient ingredient = dish.GetComponent<Ingredient>();
-            if (ingredient != null)
+            // If not a plate, check if it's a single ingredient
+            if (dish is Ingredient ingredient)
             {
                 return new List<Ingredient> { ingredient };
             }

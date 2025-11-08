@@ -16,30 +16,38 @@ namespace TinyChef
             orderManager = FindObjectOfType<OrderManager>();
         }
 
-        protected override bool CanPlaceItem(Ingredient ingredient)
+        protected override bool CanPlaceItem(IItem item)
         {
-            // Only plates can be served
-            return IsPlate(ingredient);
+            // Only non-empty plates can be served
+            if (!IsPlate(item)) return false;
+
+            Plate plate = item.gameObject.GetComponent<Plate>();
+            if (plate != null)
+            {
+                return !plate.IsEmpty;
+            }
+
+            return false;
         }
 
         protected override bool TryPutDownItem()
         {
             Chef chef = FindObjectOfType<Chef>();
-            if (chef == null || chef.CurrentIngredient == null) return false;
+            if (chef == null || chef.CurrentItem == null) return false;
 
-            Ingredient ingredient = chef.CurrentIngredient;
+            IItem item = chef.CurrentItem;
             
-            if (CanPlaceItem(ingredient))
+            if (CanPlaceItem(item))
             {
                 // Try to serve the dish
                 if (orderManager != null)
                 {
-                    bool success = orderManager.TryServeOrder(ingredient);
+                    bool success = orderManager.TryServeOrder(item);
                     if (success)
                     {
                         chef.DropItem();
                         // Plate is consumed when served successfully
-                        Destroy(ingredient.gameObject);
+                        Destroy(item.gameObject);
                         return true;
                     }
                     else
@@ -58,7 +66,7 @@ namespace TinyChef
             return false;
         }
 
-        protected override bool CanProcess(Ingredient ingredient)
+        protected override bool CanProcess(IItem item)
         {
             return false; // Can't process at serving station
         }

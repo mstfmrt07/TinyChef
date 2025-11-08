@@ -5,18 +5,16 @@ namespace TinyChef
 {
     public abstract class BaseCounter : MonoBehaviour, IInteractable
     {
-        [Header("Counter Settings")]
-        public CounterType counterType;
+        [Header("Counter Settings")] public CounterType counterType;
         public HighlightObject highlightObject;
         public Transform itemPlacePoint;
-        
-        [Header("Processing Settings")]
-        public float processTime = 2f;
+
+        [Header("Processing Settings")] public float processTime = 2f;
         public bool isProcessing = false;
         public float processProgress = 0f;
 
-        protected Ingredient currentItem;
-        public Ingredient CurrentItem => currentItem;
+        protected IItem currentItem;
+        public IItem CurrentItem => currentItem;
 
         public virtual void Select()
         {
@@ -56,28 +54,56 @@ namespace TinyChef
             }
         }
 
-        protected virtual bool CanPlaceItem(Ingredient ingredient)
+        protected virtual bool CanPlaceItem(IItem item)
         {
-            if (ingredient == null) return false;
+            if (item == null) return false;
+
+            // Special case: if counter has a plate, we can always try to add ingredients to it
+            if (currentItem != null)
+            {
+                Plate plate = currentItem.gameObject.GetComponent<Plate>();
+                if (plate != null)
+                {
+                    // Allow trying to add ingredient to plate (validation happens in TryPutDownItem)
+                    // But only if the item being placed is an Ingredient
+                    return item is Ingredient;
+                }
+            }
 
             // Check counter-specific rules
             switch (counterType)
             {
                 case CounterType.Dishwasher:
                     // Only plates can be placed in dishwasher
-                    return IsPlate(ingredient);
+                    return IsPlate(item);
 
                 case CounterType.Stove:
-                    // Only non-cooked items can be placed (can't re-cook cooked items)
-                    return ingredient.State != IngredientState.Cooked;
+                    // Only non-cooked ingredients can be placed (can't re-cook cooked items)
+                    if (item is Ingredient ingredient)
+                    {
+                        return ingredient.State != IngredientState.Cooked;
+                    }
+
+                    return false;
 
                 case CounterType.CuttingBoard:
                     // Can't place already processed/cooked items
-                    return ingredient.State == IngredientState.Raw;
+                    if (item is Ingredient ingredient2)
+                    {
+                        return ingredient2.State == IngredientState.Raw;
+                    }
+
+                    return false;
 
                 case CounterType.ServingStation:
-                    // Only plates with items can be served
-                    return IsPlate(ingredient);
+                    // Only non-empty plates can be served
+                    if (IsPlate(item))
+                    {
+                        Plate plate = item.gameObject.GetComponent<Plate>();
+                        return plate != null && !plate.IsEmpty;
+                    }
+
+                    return false;
 
                 case CounterType.Basic:
                 case CounterType.IngredientSupply:
@@ -88,23 +114,33 @@ namespace TinyChef
             }
         }
 
-        protected virtual bool CanProcess(Ingredient ingredient)
+        protected virtual bool CanProcess(IItem item)
         {
-            if (ingredient == null) return false;
+            if (item == null) return false;
 
             switch (counterType)
             {
                 case CounterType.CuttingBoard:
                     // Can only process raw ingredients
-                    return ingredient.State == IngredientState.Raw;
+                    if (item is Ingredient ingredient)
+                    {
+                        return ingredient.State == IngredientState.Raw;
+                    }
+
+                    return false;
 
                 case CounterType.Stove:
                     // Can cook processed or raw ingredients (but not already cooked)
-                    return ingredient.State != IngredientState.Cooked;
+                    if (item is Ingredient ingredient2)
+                    {
+                        return ingredient2.State != IngredientState.Cooked;
+                    }
+
+                    return false;
 
                 case CounterType.Dishwasher:
                     // Can wash plates (assuming plates can be dirty)
-                    return IsPlate(ingredient);
+                    return IsPlate(item);
 
                 default:
                     return false;
@@ -114,7 +150,7 @@ namespace TinyChef
         protected virtual bool TryPickUpItem()
         {
             Chef chef = FindObjectOfType<Chef>();
-            if (chef == null || chef.CurrentIngredient != null) return false;
+            if (chef == null || chef.CurrentItem != null) return false;
 
             if (currentItem != null)
             {
@@ -129,24 +165,58 @@ namespace TinyChef
         protected virtual bool TryPutDownItem()
         {
             Chef chef = FindObjectOfType<Chef>();
-            if (chef == null || chef.CurrentIngredient == null) return false;
+            if (chef == null || chef.CurrentItem == null) return false;
 
-            Ingredient ingredient = chef.CurrentIngredient;
-            
-            if (CanPlaceItem(ingredient))
+            IItem item = chef.CurrentItem;
+
+            // Check if counter has a plate - if so, try to add ingredient to plate
+            if (currentItem != null)
+            {
+                Plate plate = currentItem.gameObject.GetComponent<Plate>();
+                if (plate != null && item is Ingredient ingredient)
+                {
+                    // Try to add ingredient to plate
+                    LevelController levelController = FindObjectOfType<LevelController>();
+                    LevelData levelData = levelController != null ? levelController.CurrentLevelData : null;
+
+                    if (levelData != null && plate.TryAddIngredient(ingredient, levelData))
+                    {
+                        chef.DropItem();
+                        // Ingredient is now parented to plate, so we don't need to manage it here
+                        return true;
+                    }
+                    else
+                    {
+                        if (ingredient.data != null)
+                        {
+                            Debug.Log($"Cannot add {ingredient.data.name} to plate - doesn't match any recipe requirement");
+                        }
+
+                        return false;
+                    }
+                }
+            }
+
+            // Normal placement logic
+            if (CanPlaceItem(item))
             {
                 chef.DropItem();
-                currentItem = ingredient;
+                currentItem = item;
                 if (itemPlacePoint != null)
                 {
                     currentItem.transform.SetParent(itemPlacePoint);
                     currentItem.transform.localPosition = Vector3.zero;
                 }
+
                 return true;
             }
             else
             {
-                Debug.Log($"Cannot place {ingredient.data.name} on {counterType}");
+                if (item is Ingredient ingredient2 && ingredient2.data != null)
+                {
+                    Debug.Log($"Cannot place {ingredient2.data.name} on {counterType}");
+                }
+
                 return false;
             }
         }
@@ -183,31 +253,37 @@ namespace TinyChef
             switch (counterType)
             {
                 case CounterType.CuttingBoard:
-                    currentItem.Process();
+                    if (currentItem is Ingredient ingredient)
+                    {
+                        ingredient.Process();
+                    }
+
                     break;
 
                 case CounterType.Stove:
                     // Default cooking type, can be overridden in StoveCounter
-                    currentItem.Cook(CookingType.Boiled);
+                    if (currentItem is Ingredient ingredient2)
+                    {
+                        ingredient2.Cook(CookingType.Boiled);
+                    }
+
                     break;
 
                 case CounterType.Dishwasher:
-                    // Wash plate logic (you may need to add a Wash method to Ingredient)
+                    // Wash plate logic
                     Debug.Log("Plate washed");
                     break;
             }
         }
 
-        protected virtual bool IsPlate(Ingredient ingredient)
+        protected virtual bool IsPlate(IItem item)
         {
-            if (ingredient == null) return false;
-            
-            // Check if ingredient has a Plate component
-            Plate plate = ingredient.GetComponent<Plate>();
-            if (plate != null) return true;
-            
-            // Fallback: check name
-            return ingredient.data.name.ToLower().Contains("plate");
+            if (item == null) return false;
+
+            // Check if item has a Plate component
+            Plate plate = item.gameObject.GetComponent<Plate>();
+
+            return plate != null;
         }
     }
 }

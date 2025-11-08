@@ -154,6 +154,9 @@ MonoBehaviour:
   processTime: 2
   isProcessing: 0
   processProgress: 0
+  startWithPlate: 1
+  platePrefab: {fileID: 5156965434377197307, guid: 50f82fbe3199347a2884dacfaabd077f,
+    type: 3}
 --- !u!1001 &4670201597973929277
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -15,8 +15,8 @@ namespace TinyChef
         private float interactTimer = 0f;
         private bool canInteract = true;
         private IInteractable currentSelection;
-        private Ingredient currentIngredient;
-        public Ingredient CurrentIngredient => currentIngredient;
+        private IItem currentItem;
+        public IItem CurrentItem => currentItem;
 
         private int currentCounterIndex = 0;
         private TwoButtonInputHandler inputHandler;
@@ -186,26 +186,26 @@ namespace TinyChef
             interactable?.Interact();
         }
 
-        public void GrabItem(Ingredient ingredient)
+        public void GrabItem(IItem item)
         {
-            if (ingredient == null) return;
+            if (item == null) return;
 
             Debug.Log("Item Grabbed");
-            currentIngredient = ingredient;
+            currentItem = item;
             if (grabPoint != null)
             {
-                currentIngredient.transform.SetParent(grabPoint);
-                currentIngredient.transform.localPosition = Vector3.zero;
+                currentItem.transform.SetParent(grabPoint);
+                currentItem.transform.localPosition = Vector3.zero;
             }
         }
 
         public void DropItem()
         {
-            if (currentIngredient == null) return;
+            if (currentItem == null) return;
 
             Debug.Log("Item Dropped");
-            currentIngredient.transform.SetParent(null);
-            currentIngredient = null;
+            currentItem.transform.SetParent(null);
+            currentItem = null;
         }
 
         private void OnDestroy()
