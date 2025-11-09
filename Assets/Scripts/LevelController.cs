@@ -20,6 +20,7 @@ namespace TinyChef
 
         // Events
         public Action<LevelData> OnLevelLoaded;
+        public Action OnLevelStarted;
         public Action<int> OnLevelCompleted; // Passes star rating (1-3)
         public Action OnLevelFailed;
         public Action<float> OnLevelTimeChanged; // Passes time remaining
@@ -141,6 +142,7 @@ namespace TinyChef
             // Start the level
             isLevelActive = true;
             levelTimeRemaining = currentLevelData.levelDuration;
+            OnLevelStarted?.Invoke();
         }
 
         private void UnloadCurrentLevel()

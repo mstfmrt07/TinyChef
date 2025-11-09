@@ -34,6 +34,10 @@ namespace TinyChef
         private void Awake()
         {
             levelController = FindObjectOfType<LevelController>();
+            if (levelController != null)
+            {
+                levelController.OnLevelStarted += OnLevelStarted;
+            }
         }
 
         private void Start()
@@ -246,6 +250,11 @@ namespace TinyChef
             }
         }
 
+        private void OnLevelStarted()
+        {
+            GenerateNewOrder();
+        }
+
         private void ClearAllOrders()
         {
             foreach (var orderUI in orderUIElements)
@@ -257,6 +266,14 @@ namespace TinyChef
             }
             orderUIElements.Clear();
             activeOrders.Clear();
+        }
+
+        private void OnDestroy()
+        {
+            if (levelController != null)
+            {
+                levelController.OnLevelStarted -= OnLevelStarted;
+            }
         }
 
         public int GetTotalScore() => totalScore;
