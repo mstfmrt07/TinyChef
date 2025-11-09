@@ -56,7 +56,13 @@ namespace TinyChef
 
             if (chef.CurrentItem == null)
             {
-                // Try to pick up an ingredient from the stove
+                // Chef has nothing - cannot pick up from stove (needs a plate)
+                Debug.Log("StoveCounter: Cannot pick up - chef needs a plate!");
+                return;
+            }
+            else if (chef.CurrentItem is Plate)
+            {
+                // Chef has a plate - try to pick up ingredients from stove
                 TryPickUpItem();
             }
             else
@@ -395,9 +401,23 @@ namespace TinyChef
         protected override bool TryPickUpItem()
         {
             Chef chef = FindObjectOfType<Chef>();
-            if (chef == null || chef.CurrentItem != null) return false;
+            if (chef == null) return false;
 
             if (ingredients.Count == 0) return false;
+
+            // Check if chef has a plate
+            if (chef.CurrentItem == null || !(chef.CurrentItem is Plate plate))
+            {
+                Debug.Log("StoveCounter: Cannot pick up - chef needs a plate to pick up ingredients from stove!");
+                return false;
+            }
+
+            // Check if plate is clean
+            if (plate.IsDirty)
+            {
+                Debug.Log("StoveCounter: Cannot pick up - plate must be clean!");
+                return false;
+            }
 
             // Check if ALL ingredients are cooked (in target state)
             bool allCooked = ingredients.All(i => i.State == IngredientState.Cooked);
@@ -409,42 +429,73 @@ namespace TinyChef
                 return false;
             }
 
-            // All ingredients are cooked, pick up one
-            Ingredient itemToPick = ingredients.FirstOrDefault(i => i.State == IngredientState.Cooked);
+            // Get LevelData for plate validation
+            LevelController levelController = FindObjectOfType<LevelController>();
+            LevelData levelData = levelController != null ? levelController.CurrentLevelData : null;
 
-            if (itemToPick != null)
+            if (levelData == null)
             {
-                chef.GrabItem(itemToPick);
-                ingredients.Remove(itemToPick);
-                ingredientCookingDefs.Remove(itemToPick);
-                ingredientStartTimes.Remove(itemToPick);
+                Debug.LogWarning("StoveCounter: Cannot find LevelData!");
+                return false;
+            }
 
-                // Recalculate if still cooking
-                if (ingredients.Count > 0)
+            // Transfer all cooked ingredients to the plate
+            // Only transfer ingredients that are fully cooked
+            List<Ingredient> ingredientsToTransfer = ingredients.Where(i => i.State == IngredientState.Cooked).ToList();
+            
+            if (ingredientsToTransfer.Count == 0)
+            {
+                Debug.Log("StoveCounter: No cooked ingredients to transfer!");
+                return false;
+            }
+
+            // Ensure ALL ingredients in stove are cooked before transferring
+            if (ingredientsToTransfer.Count != ingredients.Count)
+            {
+                Debug.Log("StoveCounter: Cannot pick up - not all ingredients are cooked yet!");
+                return false;
+            }
+
+            bool allTransferred = true;
+
+            foreach (var ingredient in ingredientsToTransfer)
+            {
+                if (plate.TryAddIngredient(ingredient, levelData))
                 {
-                    RecalculateTotalCookingTime();
-                    // Adjust start times for remaining ingredients
-                    AdjustStartTimes();
-                    
-                    // Check if we should stop cooking (no more uncooked ingredients)
-                    bool hasUncookedIngredients = ingredients.Any(i => i.State != IngredientState.Cooked);
-                    if (!hasUncookedIngredients)
-                    {
-                        StopCooking();
-                    }
+                    // Ingredient is now parented to plate and will move with it
+                    ingredients.Remove(ingredient);
+                    ingredientCookingDefs.Remove(ingredient);
+                    ingredientStartTimes.Remove(ingredient);
                 }
                 else
                 {
-                    StopCooking();
+                    Debug.Log($"StoveCounter: Could not add {ingredient.data?.name} to plate - doesn't match recipe requirements");
+                    allTransferred = false;
                 }
-
-                // Update UI visibility
-                UpdateUIVisibility();
-
-                return true;
             }
 
-            return false;
+            // If all ingredients were transferred, update stove state
+            if (ingredients.Count == 0)
+            {
+                StopCooking();
+            }
+            else
+            {
+                // Recalculate if still has ingredients
+                RecalculateTotalCookingTime();
+                AdjustStartTimes();
+                
+                bool hasUncookedIngredients = ingredients.Any(i => i.State != IngredientState.Cooked);
+                if (!hasUncookedIngredients)
+                {
+                    StopCooking();
+                }
+            }
+
+            // Update UI visibility
+            UpdateUIVisibility();
+
+            return allTransferred && ingredientsToTransfer.Count > 0;
         }
 
         protected override bool CanProcess(IItem item)
