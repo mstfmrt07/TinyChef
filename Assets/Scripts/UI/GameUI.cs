@@ -6,19 +6,16 @@ namespace TinyChef
 {
     public class GameUI : MonoBehaviour
     {
-        [Header("Score Display")]
-        public TextMeshProUGUI scoreText;
+        [Header("Score Display")] public TextMeshProUGUI scoreText;
 
-        [Header("Timer Display")]
-        public TextMeshProUGUI timerText;
+        [Header("Timer Display")] public TextMeshProUGUI timerText;
         public Color timerNormalColor = Color.green;
         public Color timerWarningColor = Color.yellow;
         public Color timerCriticalColor = Color.red;
         public float warningThreshold = 60f; // seconds
         public float criticalThreshold = 30f; // seconds
 
-        [Header("Level End Panel")]
-        public GameObject levelEndPanel;
+        [Header("Level End Panel")] public GameObject levelEndPanel;
         public TextMeshProUGUI levelEndScoreText;
 
         private LevelController levelController;
@@ -95,7 +92,7 @@ namespace TinyChef
         {
             if (scoreText != null)
             {
-                scoreText.text = currentScore.ToString();
+                scoreText.text = $"Score:\n{currentScore}";
             }
         }
 
@@ -105,7 +102,7 @@ namespace TinyChef
             {
                 int minutes = Mathf.FloorToInt(timeRemaining / 60f);
                 int seconds = Mathf.FloorToInt(timeRemaining % 60f);
-                timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+                timerText.text = $"Time:\n{minutes:00}:{seconds:00}";
 
                 // Change color based on time remaining
                 if (timeRemaining <= criticalThreshold)
@@ -161,4 +158,3 @@ namespace TinyChef
         }
     }
 }
-
