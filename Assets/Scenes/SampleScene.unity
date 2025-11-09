@@ -687,6 +687,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48a6c8a538c642a7a8098895317a15e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  navigationButton: 113
+  interactionButton: 101
+  longPressNavigationInterval: 0.1
+  longPressThreshold: 0.2
 --- !u!4 &1699032195
 Transform:
   m_ObjectHideFlags: 0

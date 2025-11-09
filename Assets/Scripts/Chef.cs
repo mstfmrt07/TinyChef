@@ -19,7 +19,6 @@ namespace TinyChef
         public IItem CurrentItem => currentItem;
 
         private int currentCounterIndex = 0;
-        private TwoButtonInputHandler inputHandler;
         private LevelController levelController;
 
         private List<BaseCounter> AvailableCounters
@@ -39,15 +38,11 @@ namespace TinyChef
         {
             interactTimer = interactCooldown;
             canInteract = true;
-            inputHandler = GetComponent<TwoButtonInputHandler>();
-            if (inputHandler == null)
-            {
-                inputHandler = gameObject.AddComponent<TwoButtonInputHandler>();
-            }
 
-            inputHandler.OnNavigationPressed += NavigateToNextCounter;
-            inputHandler.OnShortInteract += HandleShortInteract;
-            inputHandler.OnLongInteract += HandleLongInteract;
+            // Subscribe to global input controller events
+            InputController.OnNavigationPressed += NavigateToNextCounter;
+            InputController.OnShortInteract += HandleShortInteract;
+            InputController.OnLongInteract += HandleLongInteract;
 
             levelController = FindObjectOfType<LevelController>();
 
@@ -223,6 +218,11 @@ namespace TinyChef
 
         private void OnDestroy()
         {
+            // Unsubscribe from input controller events
+            InputController.OnNavigationPressed -= NavigateToNextCounter;
+            InputController.OnShortInteract -= HandleShortInteract;
+            InputController.OnLongInteract -= HandleLongInteract;
+
             if (levelController != null)
             {
                 levelController.OnLevelLoaded -= OnLevelLoaded;

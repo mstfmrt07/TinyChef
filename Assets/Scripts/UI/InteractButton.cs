@@ -1,0 +1,65 @@
+using UnityEngine;
+using TinyChef;
+
+namespace TinyChef.UI
+{
+    [RequireComponent(typeof(LongPressButton))]
+    public class InteractButton : MonoBehaviour
+    {
+        [Header("Interaction Settings")]
+        [SerializeField] private float longPressThreshold = 0.5f;
+
+        private LongPressButton longPressButton;
+
+        private void Awake()
+        {
+            longPressButton = GetComponent<LongPressButton>();
+            if (longPressButton == null)
+            {
+                Debug.LogError("InteractButton requires LongPressButton component!");
+                return;
+            }
+
+            longPressButton.SetLongPressThreshold(longPressThreshold);
+            longPressButton.SetTriggerOnRelease(true);
+
+            longPressButton.OnShortPress.AddListener(OnShortPress);
+            longPressButton.OnLongPress.AddListener(OnLongPress);
+        }
+
+        private void OnShortPress()
+        {
+            TriggerShortInteract();
+        }
+
+        private void OnLongPress()
+        {
+            TriggerLongInteract();
+        }
+
+        private void TriggerShortInteract()
+        {
+            if (InputController.Instance != null)
+            {
+                InputController.Instance.TriggerShortInteract();
+            }
+        }
+
+        private void TriggerLongInteract()
+        {
+            if (InputController.Instance != null)
+            {
+                InputController.Instance.TriggerLongInteract();
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (longPressButton != null)
+            {
+                longPressButton.OnShortPress.RemoveListener(OnShortPress);
+                longPressButton.OnLongPress.RemoveListener(OnLongPress);
+            }
+        }
+    }
+}

@@ -210,7 +210,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5777753822499726007}
   - component: {fileID: 5777753822499726006}
-  - component: {fileID: 8701961461163243374}
   m_Layer: 0
   m_Name: Chef
   m_TagString: Untagged
@@ -254,22 +253,6 @@ MonoBehaviour:
     m_Bits: 64
   grabPoint: {fileID: 8670396486336275747}
   rotationSpeed: 20
---- !u!114 &8701961461163243374
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5777753822499726005}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa4223c8d3f7548d091abcc31d816f97, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  navigationButton: 113
-  interactionButton: 101
-  longPressNavigationInterval: 0.1
-  longPressThreshold: 0.5
 --- !u!1 &8612400881780522353
 GameObject:
   m_ObjectHideFlags: 0
