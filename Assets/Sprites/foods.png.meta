@@ -3,7 +3,7 @@ guid: 01eb5ccc9fc5345a0a43585318daf25d
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 12
+  serializedVersion: 13
   mipmaps:
     mipMapMode: 0
     enableMipMap: 1
@@ -20,11 +20,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMasterTextureLimit: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -63,6 +64,7 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+  swizzle: 50462976
   cookieLightType: 0
   platformSettings:
   - serializedVersion: 3
@@ -75,6 +77,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -87,6 +90,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -99,6 +103,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -111,6 +116,20 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
@@ -120,10 +139,10 @@ TextureImporter:
       name: foods_0
       rect:
         serializedVersion: 2
-        x: 91
-        y: 786
-        width: 134
-        height: 134
+        x: 76
+        y: 806
+        width: 151
+        height: 143
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,10 +160,10 @@ TextureImporter:
       name: foods_1
       rect:
         serializedVersion: 2
-        x: 321
-        y: 773
-        width: 160
-        height: 160
+        x: 315
+        y: 803
+        width: 154
+        height: 154
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -162,10 +181,10 @@ TextureImporter:
       name: foods_2
       rect:
         serializedVersion: 2
-        x: 563
-        y: 773
-        width: 160
-        height: 160
+        x: 561
+        y: 802
+        width: 148
+        height: 156
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -183,10 +202,10 @@ TextureImporter:
       name: foods_3
       rect:
         serializedVersion: 2
-        x: 806
-        y: 773
-        width: 160
-        height: 160
+        x: 804
+        y: 812
+        width: 142
+        height: 137
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -204,10 +223,10 @@ TextureImporter:
       name: foods_4
       rect:
         serializedVersion: 2
-        x: 78
-        y: 542
-        width: 161
-        height: 133
+        x: 76
+        y: 576
+        width: 154
+        height: 130
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -225,10 +244,10 @@ TextureImporter:
       name: foods_5
       rect:
         serializedVersion: 2
-        x: 327
-        y: 542
-        width: 148
-        height: 160
+        x: 329
+        y: 561
+        width: 128
+        height: 159
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -246,10 +265,10 @@ TextureImporter:
       name: foods_6
       rect:
         serializedVersion: 2
-        x: 570
-        y: 542
-        width: 147
-        height: 151
+        x: 572
+        y: 562
+        width: 123
+        height: 157
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -267,10 +286,10 @@ TextureImporter:
       name: foods_7
       rect:
         serializedVersion: 2
-        x: 824
-        y: 542
-        width: 124
-        height: 160
+        x: 808
+        y: 560
+        width: 132
+        height: 159
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -288,10 +307,10 @@ TextureImporter:
       name: foods_8
       rect:
         serializedVersion: 2
-        x: 78
-        y: 310
-        width: 160
-        height: 160
+        x: 99
+        y: 325
+        width: 107
+        height: 164
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -309,10 +328,10 @@ TextureImporter:
       name: foods_9
       rect:
         serializedVersion: 2
-        x: 325
-        y: 310
-        width: 152
-        height: 160
+        x: 315
+        y: 319
+        width: 159
+        height: 157
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -330,10 +349,10 @@ TextureImporter:
       name: foods_10
       rect:
         serializedVersion: 2
-        x: 565
-        y: 310
-        width: 157
-        height: 160
+        x: 568
+        y: 318
+        width: 131
+        height: 159
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -351,10 +370,10 @@ TextureImporter:
       name: foods_11
       rect:
         serializedVersion: 2
-        x: 808
-        y: 310
-        width: 156
-        height: 160
+        x: 798
+        y: 318
+        width: 153
+        height: 159
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -373,9 +392,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 75
-        y: 76
-        width: 167
-        height: 150
+        y: 79
+        width: 153
+        height: 144
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -393,10 +412,10 @@ TextureImporter:
       name: foods_13
       rect:
         serializedVersion: 2
-        x: 315
-        y: 77
-        width: 172
-        height: 164
+        x: 345
+        y: 68
+        width: 103
+        height: 168
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -414,10 +433,10 @@ TextureImporter:
       name: foods_14
       rect:
         serializedVersion: 2
-        x: 563
-        y: 77
-        width: 160
-        height: 160
+        x: 573
+        y: 67
+        width: 125
+        height: 169
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -435,10 +454,10 @@ TextureImporter:
       name: foods_15
       rect:
         serializedVersion: 2
-        x: 825
-        y: 86
-        width: 122
-        height: 129
+        x: 798
+        y: 97
+        width: 150
+        height: 114
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -463,25 +482,24 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      foods_10: -1823940272
-      foods_8: -124897740
-      foods_3: -1625741439
-      foods_1: 542498787
-      foods_2: 1643057460
-      foods_6: -1193960747
-      foods_14: 1698189910
-      foods_11: -880324740
-      foods_15: -2080599557
-      foods_5: 295686731
-      foods_13: -438614663
       foods_0: 1135691621
-      foods_4: -728476320
+      foods_1: 542498787
+      foods_10: -1823940272
+      foods_11: -880324740
       foods_12: -984488253
+      foods_13: -438614663
+      foods_14: 1698189910
+      foods_15: -2080599557
+      foods_2: 1643057460
+      foods_3: -1625741439
+      foods_4: -728476320
+      foods_5: 295686731
+      foods_6: -1193960747
       foods_7: -860620766
+      foods_8: -124897740
       foods_9: -1655927336
-  spritePackingTag: 
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
