@@ -28,12 +28,6 @@ namespace TinyChef
             {
                 levelController.OnLevelLoaded += OnLevelLoaded;
             }
-
-            // Show panel initially
-            if (panelObject != null)
-            {
-                panelObject.SetActive(true);
-            }
         }
 
         private void OnDestroy()

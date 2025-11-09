@@ -7,13 +7,11 @@ namespace TinyChef
 {
     public class LevelController : MonoBehaviour
     {
-        [Header("Level Settings")]
-        public List<LevelData> levels;
+        [Header("Level Settings")] public List<LevelData> levels;
         public Transform levelParent;
         public OrderManager orderManager;
 
-        [Header("Progress Settings")]
-        public int currentLevelIndex = 0;
+        [Header("Progress Settings")] public int currentLevelIndex = 0;
 
         private Level currentLevelInstance;
         private LevelData currentLevelData;
@@ -29,6 +27,7 @@ namespace TinyChef
         // Public getters
         public LevelData CurrentLevelData => currentLevelData;
         public Level CurrentLevel => currentLevelInstance;
+
         public List<BaseCounter> LevelCounters
         {
             get
@@ -37,6 +36,7 @@ namespace TinyChef
                 {
                     return currentLevelInstance.GetCounters();
                 }
+
                 return new List<BaseCounter>();
             }
         }
@@ -49,6 +49,7 @@ namespace TinyChef
                 {
                     return currentLevelInstance.GetCounters().Any(c => c.counterType == CounterType.Dishwasher);
                 }
+
                 return false;
             }
         }
@@ -66,15 +67,6 @@ namespace TinyChef
             if (orderManager == null)
             {
                 orderManager = FindObjectOfType<OrderManager>();
-            }
-        }
-
-        private void Start()
-        {
-            // Load the first level on start
-            if (levels != null && levels.Count > 0)
-            {
-                LoadLevel(currentLevelIndex);
             }
         }
 
@@ -112,14 +104,14 @@ namespace TinyChef
             {
                 GameObject levelGameObject = Instantiate(currentLevelData.levelPrefab, levelParent);
                 currentLevelInstance = levelGameObject.GetComponent<Level>();
-                
+
                 if (currentLevelInstance == null)
                 {
                     Debug.LogError($"Level prefab '{currentLevelData.levelName}' does not have a Level component!");
                     Destroy(levelGameObject);
                     return;
                 }
-                
+
                 int counterCount = currentLevelInstance.CounterCount;
                 Debug.Log($"Level loaded: {currentLevelData.levelName} with {counterCount} counters");
             }
@@ -145,7 +137,7 @@ namespace TinyChef
         public void StartLevel()
         {
             if (currentLevelData == null) return;
-            
+
             // Start the level
             isLevelActive = true;
             levelTimeRemaining = currentLevelData.levelDuration;
@@ -167,7 +159,7 @@ namespace TinyChef
             if (currentLevelData == null) return;
 
             int starRating = GetStarRating(currentScore);
-            
+
             // Just notify about progress, don't end level yet
             // Level ends when timer runs out
         }
@@ -186,7 +178,7 @@ namespace TinyChef
             }
 
             int starRating = GetStarRating(finalScore);
-            
+
             Debug.Log($"Level ended! Final score: {finalScore}, Stars: {starRating}");
             OnLevelCompleted?.Invoke(starRating);
         }
@@ -219,12 +211,14 @@ namespace TinyChef
 
         public LevelData GetCurrentLevelData() => currentLevelData;
         public int GetCurrentLevelIndex() => currentLevelIndex;
+
         public BaseCounter GetCounterAtIndex(int index)
         {
             if (currentLevelInstance != null)
             {
                 return currentLevelInstance.GetCounterAtIndex(index);
             }
+
             return null;
         }
     }
