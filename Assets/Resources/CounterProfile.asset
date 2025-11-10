@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8790393e31c5e41ff94e9fb44aa3bf7b, type: 3}
+  m_Name: CounterProfile
+  m_EditorClassIdentifier: 
+  innerRadius: 1.4
+  outerRadius: 2
+  baseHeight: 0.8
+  topThickness: 0.25
+  topOverhangOuter: 0
+  topOverhangInner: 0.1
+  angleGapDegrees: 3
+  radialGap: 1
+  flatTopOrientation: 1
+  bevelSize: 0.1
+  bevelSegments: 3
+  outputFolder: Assets/Models/Counters
+  doubleSided: 0
+  typeMaterials:
+  - type: 0
+    materials:
+    - {fileID: 2100000, guid: 18bfbef6f280d4a39ab68eb087fac137, type: 2}
+    - {fileID: 2100000, guid: 641c0ce6e3834482e9f2136af059bf1e, type: 2}
+  - type: 1
+    materials:
+    - {fileID: 2100000, guid: 18bfbef6f280d4a39ab68eb087fac137, type: 2}
+    - {fileID: 2100000, guid: 1851e379e600b460d837dbe84727e325, type: 2}
+  - type: 2
+    materials:
+    - {fileID: 2100000, guid: 18bfbef6f280d4a39ab68eb087fac137, type: 2}
+    - {fileID: 2100000, guid: 23e339ab3a53a4c29a573bedfe87bf51, type: 2}
+  - type: 3
+    materials:
+    - {fileID: 2100000, guid: 18bfbef6f280d4a39ab68eb087fac137, type: 2}
+    - {fileID: 2100000, guid: 76c0ca6dea95b4a979dacd550d7aad70, type: 2}
+  - type: 4
+    materials:
+    - {fileID: 2100000, guid: 18bfbef6f280d4a39ab68eb087fac137, type: 2}
+    - {fileID: 2100000, guid: 37654b6b5038740eb81db1a9f163a0b4, type: 2}
+  - type: 5
+    materials:
+    - {fileID: 2100000, guid: 18bfbef6f280d4a39ab68eb087fac137, type: 2}
+    - {fileID: 2100000, guid: 977ac138cca3e401c9e2e4a4143fde82, type: 2}
+  - type: 6
+    materials:
+    - {fileID: 2100000, guid: 18bfbef6f280d4a39ab68eb087fac137, type: 2}
+    - {fileID: 2100000, guid: d8deafe746fb0469a8bca208a077710e, type: 2}
