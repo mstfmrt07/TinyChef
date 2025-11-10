@@ -160,3 +160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3b856908b94644408bd8350a6bad827, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  plateRenderer: {fileID: 7949918856812926580}
+  cleanMaterial: {fileID: 2100000, guid: 0d0c2446a5a994ade97dc1ea63558739, type: 2}
+  dirtyMaterial: {fileID: 2100000, guid: 4db210229bd56436586d501d12ea091d, type: 2}
+  stackOffset: 0.05

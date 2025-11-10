@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Seasonal Salad
   m_EditorClassIdentifier: 
   name: Seasonal Salad
-  icon: {fileID: -975843215, guid: a70720f59f69a4cb09906709343c1619, type: 3}
+  icon: {fileID: 21300000, guid: 38afe7f2932b6459094c5af1ce5e2297, type: 3}
   requiredIngredients:
   - item: {fileID: 11400000, guid: cf9d166d5653d499081681107a818456, type: 2}
     targetState: 1
