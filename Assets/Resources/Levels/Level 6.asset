@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adcc72dc5980a445f984525712dbfd78, type: 3}
   m_Name: Level 6
   m_EditorClassIdentifier: 
-  levelName: Basics
-  levelPrefab: {fileID: 3558299547257779017, guid: a12eb81ed1ac9482cb7b62ccb5d813cf,
+  levelName: Let's Cook
+  levelPrefab: {fileID: 3558299547257779017, guid: 6e85e921846ff46b69504570922275db,
     type: 3}
   levelDuration: 180
   durationBetweenOrders: 10

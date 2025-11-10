@@ -15,15 +15,12 @@ MonoBehaviour:
   levelName: Basics
   levelPrefab: {fileID: 3558299547257779017, guid: a12eb81ed1ac9482cb7b62ccb5d813cf,
     type: 3}
-  levelDuration: 180
+  levelDuration: 120
   durationBetweenOrders: 10
   availableOrders:
-  - recipe: {fileID: 11400000, guid: 0997d47dcfb93400786a24f46a36d296, type: 2}
+  - recipe: {fileID: 11400000, guid: b10456cefd7814e8bb29c1a1962d656b, type: 2}
     duration: 50
     timeRemaining: 0
-  - recipe: {fileID: 11400000, guid: 1b5ccc3d48dae416f87865b4383117a6, type: 2}
-    duration: 50
-    timeRemaining: 0
-  oneStarScore: 100
-  twoStarScore: 250
-  threeStarScore: 500
+  oneStarScore: 80
+  twoStarScore: 100
+  threeStarScore: 120
