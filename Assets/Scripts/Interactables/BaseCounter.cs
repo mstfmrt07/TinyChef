@@ -9,8 +9,7 @@ namespace TinyChef
         public HighlightObject highlightObject;
         public Transform itemPlacePoint;
 
-        [Header("Processing Settings")] 
-        public float processTime = 2f;
+        [Header("Processing Settings")] public float processTime = 2f;
         public bool isProcessing = false;
         public float processProgress = 0f;
         public ProcessingUI processingUI;
@@ -82,10 +81,14 @@ namespace TinyChef
                         Plate incomingPlate = item.gameObject.GetComponent<Plate>();
                         return existingPlate.CanStackPlate(incomingPlate);
                     }
-                    
+
                     // Allow trying to add ingredient to plate (validation happens in TryPutDownItem)
                     // But only if the item being placed is an Ingredient
                     return item is Ingredient;
+                }
+                else
+                {
+                    return false; // Can't place anything on non-plate items
                 }
             }
 
@@ -95,7 +98,7 @@ namespace TinyChef
                 case CounterType.Dishwasher:
                     // Only plates can be placed in dishwasher
                     if (!IsPlate(item)) return false;
-                    
+
                     // Dishwasher accepts both clean and dirty plates
                     return true;
 
@@ -188,7 +191,7 @@ namespace TinyChef
                         return true;
                     }
                 }
-                
+
                 // Normal pickup
                 chef.GrabItem(currentItem);
                 currentItem = null;
@@ -221,9 +224,10 @@ namespace TinyChef
                             // Plate is now stacked, so we don't need to manage it separately
                             return true;
                         }
+
                         return false;
                     }
-                    
+
                     // Try to add ingredient to plate
                     if (item is Ingredient ingredient)
                     {
@@ -247,7 +251,7 @@ namespace TinyChef
                         }
                     }
                 }
-                
+
                 // Check if currentItem is an ingredient and we're placing a plate on it
                 if (currentItem is Ingredient existingIngredient && IsPlate(item))
                 {
@@ -267,6 +271,7 @@ namespace TinyChef
                                 incomingPlate.transform.SetParent(itemPlacePoint);
                                 incomingPlate.transform.localPosition = Vector3.zero;
                             }
+
                             return true;
                         }
                         else
@@ -307,14 +312,14 @@ namespace TinyChef
             if (isProcessing) return;
             isProcessing = true;
             processProgress = 0f;
-            
+
             // Show processing UI
             if (processingUI != null)
             {
                 processingUI.SetVisible(true);
                 processingUI.UpdateProgress(0f);
             }
-            
+
             StartCoroutine(ProcessCoroutine());
         }
 
@@ -323,13 +328,13 @@ namespace TinyChef
             while (processProgress < 1f && currentItem != null)
             {
                 processProgress += Time.deltaTime / processTime;
-                
+
                 // Update processing UI
                 if (processingUI != null)
                 {
                     processingUI.UpdateProgress(processProgress);
                 }
-                
+
                 yield return null;
             }
 
@@ -340,7 +345,7 @@ namespace TinyChef
 
             isProcessing = false;
             processProgress = 0f;
-            
+
             // Hide processing UI
             if (processingUI != null)
             {

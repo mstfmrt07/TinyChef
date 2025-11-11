@@ -212,7 +212,6 @@ namespace TinyChef
             if (currentItem == null) return;
 
             Debug.Log("Item Dropped");
-            currentItem.transform.SetParent(null);
             currentItem = null;
         }
 
