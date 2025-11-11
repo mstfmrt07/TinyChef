@@ -27,6 +27,24 @@ namespace TinyChef.UI
             longPressButton.OnLongPress.AddListener(OnLongPress);
         }
 
+        private void OnEnable()
+        {
+            InputController.OnInteractionStateChanged += OnKeyboardInteractionStateChanged;
+        }
+
+        private void OnDisable()
+        {
+            InputController.OnInteractionStateChanged -= OnKeyboardInteractionStateChanged;
+        }
+
+        private void OnKeyboardInteractionStateChanged(bool isPressed)
+        {
+            if (longPressButton != null)
+            {
+                longPressButton.SetVisualState(isPressed);
+            }
+        }
+
         private void OnShortPress()
         {
             TriggerShortInteract();

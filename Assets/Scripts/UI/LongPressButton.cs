@@ -100,6 +100,11 @@ namespace TinyChef.UI
 
         private void UpdateVisual(bool pressed)
         {
+            SetVisualState(pressed);
+        }
+
+        public void SetVisualState(bool pressed)
+        {
             if (buttonImage != null)
             {
                 if (pressed && pressedSprite != null)

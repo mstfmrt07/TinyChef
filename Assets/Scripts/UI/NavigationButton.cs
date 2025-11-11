@@ -29,6 +29,24 @@ namespace TinyChef.UI
             longPressButton.OnPressEnd.AddListener(OnPressEnd);
         }
 
+        private void OnEnable()
+        {
+            InputController.OnNavigationStateChanged += OnKeyboardNavigationStateChanged;
+        }
+
+        private void OnDisable()
+        {
+            InputController.OnNavigationStateChanged -= OnKeyboardNavigationStateChanged;
+        }
+
+        private void OnKeyboardNavigationStateChanged(bool isPressed)
+        {
+            if (longPressButton != null)
+            {
+                longPressButton.SetVisualState(isPressed);
+            }
+        }
+
         private void Update()
         {
             if (isHolding)

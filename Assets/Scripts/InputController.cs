@@ -37,6 +37,8 @@ namespace TinyChef
         public static event Action OnNavigationPressed;
         public static event Action OnShortInteract;
         public static event Action OnLongInteract;
+        public static event Action<bool> OnNavigationStateChanged;
+        public static event Action<bool> OnInteractionStateChanged;
 
         private float navigationPressTime = 0f;
         private float interactionPressTime = 0f;
@@ -72,6 +74,7 @@ namespace TinyChef
                 isNavigationHeld = true;
                 lastNavigationStepTime = Time.time;
                 OnNavigationPressed?.Invoke();
+                OnNavigationStateChanged?.Invoke(true);
             }
 
             if (Input.GetKey(navigationButton) && isNavigationHeld)
@@ -86,6 +89,7 @@ namespace TinyChef
             if (Input.GetKeyUp(navigationButton))
             {
                 isNavigationHeld = false;
+                OnNavigationStateChanged?.Invoke(false);
             }
         }
 
@@ -96,6 +100,7 @@ namespace TinyChef
                 interactionPressTime = Time.time;
                 isInteractionHeld = true;
                 hasTriggeredLongInteract = false;
+                OnInteractionStateChanged?.Invoke(true);
             }
 
             if (Input.GetKey(interactionButton) && isInteractionHeld)
@@ -120,6 +125,7 @@ namespace TinyChef
                 }
                 isInteractionHeld = false;
                 hasTriggeredLongInteract = false;
+                OnInteractionStateChanged?.Invoke(false);
             }
         }
 
