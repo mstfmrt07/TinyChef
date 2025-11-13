@@ -20,14 +20,15 @@ namespace TinyChef
 
         private int currentCounterIndex = 0;
         private LevelController levelController;
+        private CounterGroup activeCounterGroup;
 
         private List<BaseCounter> AvailableCounters
         {
             get
             {
-                if (levelController != null)
+                if (activeCounterGroup != null)
                 {
-                    return levelController.LevelCounters;
+                    return activeCounterGroup.Counters;
                 }
 
                 return new List<BaseCounter>();
@@ -51,6 +52,9 @@ namespace TinyChef
             {
                 levelController.OnLevelLoaded += OnLevelLoaded;
             }
+
+            // Subscribe to counter group changes
+            CounterGroup.OnCounterGroupChanged += OnCounterGroupChanged;
         }
 
         private void Update()
@@ -74,6 +78,42 @@ namespace TinyChef
         {
             // Reset to first counter when level loads
             currentCounterIndex = 0;
+            
+            // Set the first counter group as active if available
+            if (levelController != null && levelController.CurrentLevel != null)
+            {
+                CounterGroup firstGroup = levelController.CurrentLevel.GetFirstCounterGroup();
+                if (firstGroup != null)
+                {
+                    SetActiveCounterGroup(firstGroup);
+                }
+            }
+        }
+
+        private void OnCounterGroupChanged(CounterGroup newGroup)
+        {
+            if (activeCounterGroup == newGroup) return;
+
+            activeCounterGroup = newGroup;
+            
+            // Reset counter index when switching groups
+            currentCounterIndex = 0;
+        }
+
+        private void SetActiveCounterGroup(CounterGroup group)
+        {
+            if (activeCounterGroup == group) return;
+
+            activeCounterGroup = group;
+
+            // Teleport chef to the new counter group position
+            transform.position = activeCounterGroup.transform.position;
+            
+            // Reset counter index when switching groups
+            currentCounterIndex = 0;
+            
+            // Fire the event to notify that counter group changed
+            CounterGroup.SetActiveGroup(group);
         }
 
         private void RotateTowardsCurrentCounter()
@@ -215,6 +255,32 @@ namespace TinyChef
             currentItem = null;
         }
 
+        public void TeleportToPortal(PortalCounter targetPortal, CounterGroup targetGroup)
+        {
+            if (targetPortal == null || targetGroup == null)
+            {
+                Debug.LogWarning("Cannot teleport: target portal or group is null!");
+                return;
+            }
+
+            // Switch to the target counter group
+            SetActiveCounterGroup(targetGroup);
+
+            // Find the index of the target portal in the new group's counters
+            List<BaseCounter> counters = targetGroup.Counters;
+            for (int i = 0; i < counters.Count; i++)
+            {
+                if (counters[i] == targetPortal)
+                {
+                    currentCounterIndex = i;
+                    break;
+                }
+            }
+
+            // Update selection immediately
+            UpdateCurrentSelection();
+        }
+
         private void OnDestroy()
         {
             // Unsubscribe from input controller events
@@ -226,6 +292,8 @@ namespace TinyChef
             {
                 levelController.OnLevelLoaded -= OnLevelLoaded;
             }
+
+            CounterGroup.OnCounterGroupChanged -= OnCounterGroupChanged;
         }
     }
 }

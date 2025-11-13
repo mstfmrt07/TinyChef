@@ -8,6 +8,7 @@ namespace TinyChef
         Stove,          // For cooking (boiling, baking, frying)
         Dishwasher,     // For washing plates
         ServingStation, // For serving completed dishes
-        WasteBin        // For disposing unwanted items
+        WasteBin,       // For disposing unwanted items
+        Portal          // Portal for teleporting between counter groups
     }
 }
