@@ -46,12 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86e73bb8f44a0458ead9803cfab07e51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  counters:
-  - {fileID: 5118046077370637774}
-  - {fileID: 8067474652569185510}
-  - {fileID: 3313399498258020714}
-  - {fileID: 5422219854879281409}
-  - {fileID: 8835796735090664471}
+  counterGroups:
+  - {fileID: 1680077462931470689}
 --- !u!1 &5466076367569905748
 GameObject:
   m_ObjectHideFlags: 0
@@ -61,6 +57,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3254669796200072848}
+  - component: {fileID: 1680077462931470689}
   m_Layer: 0
   m_Name: Counters
   m_TagString: Untagged
@@ -88,6 +85,24 @@ Transform:
   - {fileID: 4300519511664296987}
   m_Father: {fileID: 3970037383401724074}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1680077462931470689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5466076367569905748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73df370b493b843b7a83bd18aea30449, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  counters:
+  - {fileID: 5118046077370637774}
+  - {fileID: 8067474652569185510}
+  - {fileID: 3313399498258020714}
+  - {fileID: 5422219854879281409}
+  - {fileID: 8835796735090664471}
 --- !u!1 &8324607991313348126
 GameObject:
   m_ObjectHideFlags: 0
