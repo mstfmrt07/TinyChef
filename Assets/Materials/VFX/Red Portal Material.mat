@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Blue Portal Material
+  m_Name: Red Portal Material
   m_Shader: {fileID: -6465566751694194690, guid: 08435d32e3de84556803437d15536a03,
     type: 3}
   m_Parent: {fileID: 2100000, guid: 73baa53cf1ae746feaf7c20d89974cd6, type: 2}
@@ -27,7 +27,7 @@ Material:
     m_Ints: []
     m_Floats: []
     m_Colors:
-    - _Color: {r: 0, g: 1, b: 0.8818593, a: 1}
+    - _Color: {r: 1, g: 0, b: 0.010103226, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &5757796271742842423
 MonoBehaviour:
