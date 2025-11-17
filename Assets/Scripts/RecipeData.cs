@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace TinyChef
 {
@@ -10,8 +9,25 @@ namespace TinyChef
     public class RecipeData : ScriptableObject
     {
         public new string name;
+        [TextArea] public string description;
         public Sprite icon;
+        public bool unlockedByDefault = true;
         public List<IngredientDefinition> requiredIngredients;
+
+        public string GetDisplayName()
+        {
+            return string.IsNullOrWhiteSpace(name) ? base.name : name;
+        }
+
+        public string GetId()
+        {
+            return GetDisplayName();
+        }
+
+        public Sprite GetDisplaySprite()
+        {
+            return icon;
+        }
 
         public bool IsSatisfied(List<Ingredient> ingredients)
         {

@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Onion Soup
   m_EditorClassIdentifier: 
   name: Onion Soup
+  description: A warm and comforting onion soup.
   icon: {fileID: 1639993623, guid: a70720f59f69a4cb09906709343c1619, type: 3}
+  unlockedByDefault: 1
   requiredIngredients:
   - item: {fileID: 11400000, guid: 8bc8116ffb8744b38add0410d5d0cf0c, type: 2}
     targetState: 2

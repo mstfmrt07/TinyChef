@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Tomato Soup
   m_EditorClassIdentifier: 
   name: Tomato Soup
+  description: A warm soup, vampires' favourite dish!
   icon: {fileID: -657324776, guid: a70720f59f69a4cb09906709343c1619, type: 3}
+  unlockedByDefault: 1
   requiredIngredients:
   - item: {fileID: 11400000, guid: cf9d166d5653d499081681107a818456, type: 2}
     targetState: 2
