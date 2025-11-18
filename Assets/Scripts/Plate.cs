@@ -140,8 +140,7 @@ namespace TinyChef
         /// </summary>
         public void MakeDirty()
         {
-            isDirty = true;
-            UpdateVisual();
+            SetClean(false);
         }
 
         /// <summary>
@@ -149,7 +148,15 @@ namespace TinyChef
         /// </summary>
         public void Clean()
         {
-            isDirty = false;
+            SetClean(true);
+        }
+
+        /// <summary>
+        /// Sets the clean/dirty state of the plate
+        /// </summary>
+        public void SetClean(bool clean)
+        {
+            isDirty = !clean;
             UpdateVisual();
         }
 

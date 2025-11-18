@@ -69,7 +69,6 @@ namespace TinyChef
                     Debug.Log("ServingStation: Order served successfully!");
                     chef.DropItem();
                     
-                    // Destroy the plate and all ingredients
                     Plate plate = item.gameObject.GetComponent<Plate>();
                     if (plate != null)
                     {
@@ -81,18 +80,34 @@ namespace TinyChef
                                 Destroy(ingredient.gameObject);
                             }
                         }
+                        
+                        // Destroy the used plate
+                        Destroy(plate.gameObject);
                     }
                     
-                    // Destroy the plate
-                    Destroy(item.gameObject);
+                    // Check if there's a dishwasher in the level
+                    LevelController levelController = ReferenceManager.Instance.LevelController;
+                    bool hasDishwasher = levelController != null && levelController.HasDishwasher;
                     
-                    // Create a new clean plate on the serving station
+                    // Always create a new plate
                     if (cleanPlatePrefab != null)
                     {
-                        Debug.Log("ServingStation: Creating new clean plate");
                         Plate newPlate = Instantiate(cleanPlatePrefab, itemPlacePoint != null ? itemPlacePoint : transform);
                         newPlate.transform.localPosition = Vector3.zero;
                         newPlate.transform.localRotation = Quaternion.identity;
+                        
+                        if (hasDishwasher)
+                        {
+                            // Set new plate as dirty if dishwasher exists
+                            newPlate.SetClean(false);
+                            Debug.Log("ServingStation: Created new dirty plate (dishwasher available)");
+                        }
+                        else
+                        {
+                            // Plate is already clean by default
+                            Debug.Log("ServingStation: Created new clean plate");
+                        }
+                        
                         currentItem = newPlate;
                     }
                     else

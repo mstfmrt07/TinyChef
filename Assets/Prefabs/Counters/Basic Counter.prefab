@@ -74,7 +74,7 @@ Transform:
   m_GameObject: {fileID: 7734374360234027441}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.75, z: 1.5}
+  m_LocalPosition: {x: 0, y: 0.6, z: 1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -154,6 +154,7 @@ MonoBehaviour:
   processTime: 2
   isProcessing: 0
   processProgress: 0
+  processingUI: {fileID: 0}
   startWithPlate: 1
   platePrefab: {fileID: 5156965434377197307, guid: 50f82fbe3199347a2884dacfaabd077f,
     type: 3}
