@@ -7,8 +7,6 @@ namespace TinyChef
 {
     public class RecipeController : MonoBehaviour
     {
-        public static RecipeController Instance { get; private set; }
-
         [Header("Recipe Sources")]
         [SerializeField] private List<RecipeData> manualRecipes = new List<RecipeData>();
         [SerializeField] private bool autoPopulateFromResources = true;
@@ -22,13 +20,6 @@ namespace TinyChef
 
         private void Awake()
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
-            Instance = this;
             DontDestroyOnLoad(gameObject);
 
             EnsureSaveManager();
@@ -47,16 +38,11 @@ namespace TinyChef
             {
                 saveManager.OnRecipeUnlocked -= HandleRecipeUnlocked;
             }
-
-            if (Instance == this)
-            {
-                Instance = null;
-            }
         }
 
         private void EnsureSaveManager()
         {
-            saveManager = SaveManager.Instance ?? FindObjectOfType<SaveManager>();
+            saveManager = ReferenceManager.Instance.SaveManager ?? FindObjectOfType<SaveManager>();
 
             if (saveManager == null)
             {

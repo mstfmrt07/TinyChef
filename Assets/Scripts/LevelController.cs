@@ -9,7 +9,6 @@ namespace TinyChef
     {
         [Header("Level Settings")] public List<LevelData> levels;
         public Transform levelParent;
-        public OrderManager orderManager;
 
         [Header("Progress Settings")] public int currentLevelIndex = 0;
 
@@ -63,11 +62,6 @@ namespace TinyChef
             if (levelParent == null)
             {
                 levelParent = transform;
-            }
-
-            if (orderManager == null)
-            {
-                orderManager = FindObjectOfType<OrderManager>();
             }
         }
 
@@ -123,9 +117,9 @@ namespace TinyChef
             }
 
             // Set level data in order manager
-            if (orderManager != null)
+            if (ReferenceManager.Instance.OrderManager != null)
             {
-                orderManager.SetLevelData(currentLevelData);
+                ReferenceManager.Instance.OrderManager.SetLevelData(currentLevelData);
             }
 
             // Initialize level timer but don't start yet
@@ -174,9 +168,9 @@ namespace TinyChef
 
             // Get final score from OrderManager
             int finalScore = 0;
-            if (orderManager != null)
+            if (ReferenceManager.Instance.OrderManager != null)
             {
-                finalScore = orderManager.GetTotalScore();
+                finalScore = ReferenceManager.Instance.OrderManager.GetTotalScore();
             }
 
             int starRating = GetStarRating(finalScore);

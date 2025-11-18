@@ -231,7 +231,7 @@ namespace TinyChef
                     // Try to add ingredient to plate
                     if (item is Ingredient ingredient)
                     {
-                        LevelController levelController = FindObjectOfType<LevelController>();
+                        LevelController levelController = ReferenceManager.Instance.LevelController;
                         LevelData levelData = levelController != null ? levelController.CurrentLevelData : null;
 
                         if (levelData != null && existingPlate.TryAddIngredient(ingredient, levelData))
@@ -258,7 +258,7 @@ namespace TinyChef
                     Plate incomingPlate = item.gameObject.GetComponent<Plate>();
                     if (incomingPlate != null)
                     {
-                        LevelController levelController = FindObjectOfType<LevelController>();
+                        LevelController levelController = ReferenceManager.Instance.LevelController;
                         LevelData levelData = levelController != null ? levelController.CurrentLevelData : null;
 
                         if (levelData != null && incomingPlate.TryAddIngredient(existingIngredient, levelData))

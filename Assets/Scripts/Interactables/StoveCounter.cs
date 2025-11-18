@@ -430,7 +430,7 @@ namespace TinyChef
             }
 
             // Get LevelData for plate validation
-            LevelController levelController = FindObjectOfType<LevelController>();
+            LevelController levelController = ReferenceManager.Instance.LevelController;
             LevelData levelData = levelController != null ? levelController.CurrentLevelData : null;
 
             if (levelData == null)

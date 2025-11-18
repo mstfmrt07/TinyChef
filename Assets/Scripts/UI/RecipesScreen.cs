@@ -28,17 +28,6 @@ namespace TinyChef
         [SerializeField] private Transform ingredientsContainer;
         [SerializeField] private RecipeIngredientUI ingredientEntryPrefab;
 
-        [Header("Icon Lookups")]
-        [SerializeField] private List<CookingTypeIconMapping> cookingTypeIconMappings = new List<CookingTypeIconMapping>();
-
-        [System.Serializable]
-        public class CookingTypeIconMapping
-        {
-            public CookingType cookingType;
-            public Sprite icon;
-        }
-
-        private readonly Dictionary<CookingType, Sprite> cookingTypeIconLookup = new Dictionary<CookingType, Sprite>();
         private readonly List<RecipeListItemUI> listItemPool = new List<RecipeListItemUI>();
 
         private RecipeController recipeController;
@@ -61,7 +50,6 @@ namespace TinyChef
 
         private void Awake()
         {
-            BuildIconLookups();
             SetupButtons();
 
             if (screenRoot != null)
@@ -72,7 +60,7 @@ namespace TinyChef
 
         private void OnEnable()
         {
-            recipeController = RecipeController.Instance ?? FindObjectOfType<RecipeController>();
+            recipeController = ReferenceManager.Instance.RecipeController ?? FindObjectOfType<RecipeController>();
             if (recipeController == null)
             {
                 Debug.LogWarning("RecipesScreen could not find a RecipeController in the scene.");
@@ -104,17 +92,6 @@ namespace TinyChef
             }
         }
 
-        private void BuildIconLookups()
-        {
-            cookingTypeIconLookup.Clear();
-            foreach (var mapping in cookingTypeIconMappings)
-            {
-                if (mapping != null && mapping.icon != null)
-                {
-                    cookingTypeIconLookup[mapping.cookingType] = mapping.icon;
-                }
-            }
-        }
 
         public void Open()
         {
@@ -286,7 +263,13 @@ namespace TinyChef
 
                 RecipeIngredientUI entry = Instantiate(ingredientEntryPrefab, ingredientsContainer);
                 Sprite ingredientSprite = representative.item != null ? representative.item.icon : null;
-                Sprite cookingSprite = cookingTypeIconLookup.TryGetValue(representative.targetCookingType, out var cIcon) ? cIcon : null;
+                Sprite cookingSprite = null;
+                
+                // Get cooking type sprite from GameSettings
+                if (ReferenceManager.Instance.GameSettings != null)
+                {
+                    cookingSprite = ReferenceManager.Instance.GameSettings.GetCookingTypeSprite(representative.targetCookingType);
+                }
 
                 entry.SetData(representative, ingredientSprite, cookingSprite, count);
             }

@@ -42,7 +42,7 @@ namespace TinyChef.UI
 
             if (levelController == null)
             {
-                levelController = FindObjectOfType<LevelController>();
+                levelController = ReferenceManager.Instance.LevelController ?? FindObjectOfType<LevelController>();
             }
         }
 

@@ -5,26 +5,8 @@ namespace TinyChef
 {
     public class InputController : MonoBehaviour
     {
-        private static InputController _instance;
-        public static InputController Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = FindObjectOfType<InputController>();
-                    if (_instance == null)
-                    {
-                        GameObject go = new GameObject("InputController");
-                        _instance = go.AddComponent<InputController>();
-                        DontDestroyOnLoad(go);
-                    }
-                }
-                return _instance;
-            }
-        }
-
         [Header("Keyboard Input Settings")]
+        [Tooltip("Will be overridden by GameSettings if available in ReferenceManager")]
         public KeyCode navigationButton = KeyCode.Q;
         public KeyCode interactionButton = KeyCode.E;
 
@@ -49,14 +31,16 @@ namespace TinyChef
 
         private void Awake()
         {
-            if (_instance == null)
+            DontDestroyOnLoad(gameObject);
+            
+            // Load settings from GameSettings if available
+            if (ReferenceManager.Instance.GameSettings != null)
             {
-                _instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else if (_instance != this)
-            {
-                Destroy(gameObject);
+                var settings = ReferenceManager.Instance.GameSettings;
+                navigationButton = settings.navigationButton;
+                interactionButton = settings.interactionButton;
+                longPressNavigationInterval = settings.longPressNavigationInterval;
+                longPressThreshold = settings.longPressThreshold;
             }
         }
 

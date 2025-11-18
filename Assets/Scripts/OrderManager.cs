@@ -33,7 +33,7 @@ namespace TinyChef
 
         private void Awake()
         {
-            levelController = FindObjectOfType<LevelController>();
+            levelController = ReferenceManager.Instance.LevelController ?? FindObjectOfType<LevelController>();
             if (levelController != null)
             {
                 levelController.OnLevelStarted += OnLevelStarted;

@@ -7,9 +7,6 @@ namespace TinyChef
         [Header("Plate Settings")]
         public Plate cleanPlatePrefab;
 
-        private OrderManager orderManager;
-        private LevelController levelController;
-
         private void Awake()
         {
             counterType = CounterType.ServingStation;
@@ -17,8 +14,6 @@ namespace TinyChef
             {
                 itemPlacePoint = transform;
             }
-            orderManager = FindObjectOfType<OrderManager>();
-            levelController = FindObjectOfType<LevelController>();
         }
 
         protected override bool CanPlaceItem(IItem item)
@@ -64,10 +59,10 @@ namespace TinyChef
             }
             
             // Try to serve the dish
-            if (orderManager != null)
+            if (ReferenceManager.Instance.OrderManager != null)
             {
                 Debug.Log("ServingStation: Calling TryServeOrder");
-                bool success = orderManager.TryServeOrder(item);
+                bool success = ReferenceManager.Instance.OrderManager.TryServeOrder(item);
                 
                 if (success)
                 {

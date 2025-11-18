@@ -3,23 +3,6 @@ using UnityEngine;
 
 namespace TinyChef
 {
-    public enum PortalColor
-    {
-        Red,
-        Blue,
-        Green,
-        Yellow,
-        Purple,
-        Orange
-    }
-
-    [System.Serializable]
-    public class PortalVFXEntry
-    {
-        public PortalColor color;
-        public GameObject vfxPrefab;
-    }
-
     public class PortalCounter : BaseCounter
     {
         [Header("Portal Settings")]
@@ -28,7 +11,6 @@ namespace TinyChef
 
         [Header("Portal VFX")]
         [SerializeField] private Transform portalEffectContainer;
-        [SerializeField] private List<PortalVFXEntry> portalEffects = new List<PortalVFXEntry>();
 
         private GameObject instantiatedVFX;
 
@@ -53,17 +35,23 @@ namespace TinyChef
                 return;
             }
 
-            // Find the VFX prefab matching the portal's color
-            foreach (var entry in portalEffects)
+            // Get VFX prefab from GameSettings
+            if (ReferenceManager.Instance.GameSettings != null)
             {
-                if (entry.color == portalColor && entry.vfxPrefab != null)
+                GameObject vfxPrefab = ReferenceManager.Instance.GameSettings.GetPortalPrefab(portalColor);
+                if (vfxPrefab != null)
                 {
-                    instantiatedVFX = Instantiate(entry.vfxPrefab, portalEffectContainer);
-                    return;
+                    instantiatedVFX = Instantiate(vfxPrefab, portalEffectContainer);
+                }
+                else
+                {
+                    Debug.LogWarning($"No VFX prefab found for portal color {portalColor} in GameSettings");
                 }
             }
-
-            Debug.LogWarning($"No VFX prefab found for portal color {portalColor} on {gameObject.name}");
+            else
+            {
+                Debug.LogWarning("GameSettings not found in ReferenceManager");
+            }
         }
 
         public void SetPairedPortal(PortalCounter portal)

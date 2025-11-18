@@ -45,7 +45,7 @@ namespace TinyChef
             InputController.OnShortInteract += HandleShortInteract;
             InputController.OnLongInteract += HandleLongInteract;
 
-            levelController = FindObjectOfType<LevelController>();
+            levelController = ReferenceManager.Instance.LevelController ?? FindObjectOfType<LevelController>();
 
             // Subscribe to level loaded event to reset counter index
             if (levelController != null)

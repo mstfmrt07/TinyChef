@@ -22,7 +22,7 @@ namespace TinyChef
 
         private void Start()
         {
-            levelController = FindObjectOfType<LevelController>();
+            levelController = ReferenceManager.Instance.LevelController ?? FindObjectOfType<LevelController>();
 
             if (levelController != null)
             {

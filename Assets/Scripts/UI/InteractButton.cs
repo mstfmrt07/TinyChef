@@ -57,17 +57,17 @@ namespace TinyChef.UI
 
         private void TriggerShortInteract()
         {
-            if (InputController.Instance != null)
+            if (ReferenceManager.Instance.InputController != null)
             {
-                InputController.Instance.TriggerShortInteract();
+                ReferenceManager.Instance.InputController.TriggerShortInteract();
             }
         }
 
         private void TriggerLongInteract()
         {
-            if (InputController.Instance != null)
+            if (ReferenceManager.Instance.InputController != null)
             {
-                InputController.Instance.TriggerLongInteract();
+                ReferenceManager.Instance.InputController.TriggerLongInteract();
             }
         }
 

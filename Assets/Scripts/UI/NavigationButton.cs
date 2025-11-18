@@ -73,9 +73,9 @@ namespace TinyChef.UI
 
         private void TriggerNavigation()
         {
-            if (InputController.Instance != null)
+            if (ReferenceManager.Instance.InputController != null)
             {
-                InputController.Instance.TriggerNavigation();
+                ReferenceManager.Instance.InputController.TriggerNavigation();
             }
         }
 

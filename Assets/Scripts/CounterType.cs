@@ -11,4 +11,14 @@ namespace TinyChef
         WasteBin,       // For disposing unwanted items
         Portal          // Portal for teleporting between counter groups
     }
+
+    public enum PortalColor
+    {
+        Red,
+        Blue,
+        Green,
+        Yellow,
+        Purple,
+        Orange
+    }
 }

@@ -19,13 +19,11 @@ namespace TinyChef
         public TextMeshProUGUI levelEndScoreText;
 
         private LevelController levelController;
-        private OrderManager orderManager;
         private int currentScore = 0;
 
         private void Start()
         {
-            levelController = FindObjectOfType<LevelController>();
-            orderManager = FindObjectOfType<OrderManager>();
+            levelController = ReferenceManager.Instance.LevelController ?? FindObjectOfType<LevelController>();
 
             // Subscribe to events
             if (levelController != null)
@@ -35,9 +33,9 @@ namespace TinyChef
                 levelController.OnLevelCompleted += OnLevelCompleted;
             }
 
-            if (orderManager != null)
+            if (ReferenceManager.Instance.OrderManager != null)
             {
-                orderManager.OnScoreChanged += OnScoreChanged;
+                ReferenceManager.Instance.OrderManager.OnScoreChanged += OnScoreChanged;
             }
 
             // Hide level end panel initially
@@ -57,9 +55,9 @@ namespace TinyChef
                 levelController.OnLevelCompleted -= OnLevelCompleted;
             }
 
-            if (orderManager != null)
+            if (ReferenceManager.Instance.OrderManager != null)
             {
-                orderManager.OnScoreChanged -= OnScoreChanged;
+                ReferenceManager.Instance.OrderManager.OnScoreChanged -= OnScoreChanged;
             }
         }
 

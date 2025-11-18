@@ -14,20 +14,12 @@ namespace TinyChef
             public List<string> unlockedRecipes = new List<string>();
         }
 
-        public static SaveManager Instance { get; private set; }
         public event Action<string> OnRecipeUnlocked;
 
         private SaveData saveData = new SaveData();
 
         private void Awake()
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
-            Instance = this;
             DontDestroyOnLoad(gameObject);
             Load();
         }
