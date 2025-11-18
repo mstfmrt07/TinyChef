@@ -96,6 +96,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86e73bb8f44a0458ead9803cfab07e51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isDarkLevel: 0
   counterGroups:
   - {fileID: 2426727445082055444}
   - {fileID: 4840277182249144947}
@@ -472,6 +473,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3254669796200072848}
     m_Modifications:
+    - target: {fileID: 7113912848319777552, guid: 1dd923f276e414a07ba493da2a513384,
+        type: 3}
+      propertyPath: portalColor
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7734374361615190085, guid: 1dd923f276e414a07ba493da2a513384,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -699,6 +705,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6691115096091227511}
     m_Modifications:
+    - target: {fileID: 7113912848319777552, guid: 1dd923f276e414a07ba493da2a513384,
+        type: 3}
+      propertyPath: portalColor
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7734374361615190085, guid: 1dd923f276e414a07ba493da2a513384,
         type: 3}
       propertyPath: m_LocalPosition.x

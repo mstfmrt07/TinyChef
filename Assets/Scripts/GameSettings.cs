@@ -21,6 +21,12 @@ namespace TinyChef
     [CreateAssetMenu(fileName = "GameSettings", menuName = "TinyChef/Game Settings")]
     public class GameSettings : ScriptableObject
     {
+        [Header("Darkness Settings")] [Tooltip("Environment lighting intensity when level is dark")] [Range(0f, 1f)]
+        public float darkLevelEnvironmentIntensity = 0f;
+
+        [Tooltip("Environment reflections intensity when level is dark")] [Range(0f, 1f)]
+        public float darkLevelReflectionIntensity = 0.5f;
+
         [Header("Portal Settings")] public List<PortalColorPrefab> portalPrefabs = new List<PortalColorPrefab>();
 
         [Header("Cooking Type Settings")] public List<CookingTypeSprite> cookingTypeSprites = new List<CookingTypeSprite>();

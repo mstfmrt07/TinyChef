@@ -65,6 +65,41 @@ namespace TinyChef
             }
         }
 
+        /// <summary>
+        /// Applies darkness settings for a level
+        /// </summary>
+        public void SetDarknessMode(bool isDark)
+        {
+            Light directionalLight = ReferenceManager.Instance.DirectionalLight;
+            Chef chef = ReferenceManager.Instance.Chef;
+            GameSettings gameSettings = ReferenceManager.Instance.GameSettings;
+
+            if (directionalLight != null)
+            {
+                directionalLight.enabled = !isDark;
+            }
+
+            if (chef != null && chef.spotlight != null)
+            {
+                chef.spotlight.enabled = isDark;
+            }
+
+            if (isDark && gameSettings != null)
+            {
+                // Set environment lighting intensity
+                RenderSettings.ambientIntensity = gameSettings.darkLevelEnvironmentIntensity;
+                
+                // Set environment reflections intensity
+                RenderSettings.reflectionIntensity = gameSettings.darkLevelReflectionIntensity;
+            }
+            else
+            {
+                // Restore default values when not dark
+                RenderSettings.ambientIntensity = 1f;
+                RenderSettings.reflectionIntensity = 1f;
+            }
+        }
+
         private void Update()
         {
             if (isLevelActive && currentLevelData != null)

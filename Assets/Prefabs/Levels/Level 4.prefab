@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3970037383401724074}
   - component: {fileID: 8112279106311333743}
   m_Layer: 0
-  m_Name: Level 2
+  m_Name: Level 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86e73bb8f44a0458ead9803cfab07e51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDarkLevel: 0
+  isDarkLevel: 1
   counterGroups:
   - {fileID: 2426727445082055444}
 --- !u!1 &5466076367569905748

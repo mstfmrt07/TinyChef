@@ -12,6 +12,10 @@ namespace TinyChef
 
         [Header("Navigation Settings")] public float rotationSpeed = 5f;
 
+        [Header("Lighting")]
+        [Tooltip("Spotlight for dark levels (will be enabled only in dark levels)")]
+        public Light spotlight;
+
         private float interactTimer = 0f;
         private bool canInteract = true;
         private IInteractable currentSelection;

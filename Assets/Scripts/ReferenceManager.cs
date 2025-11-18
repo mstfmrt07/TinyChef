@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace TinyChef
 {
@@ -107,6 +108,7 @@ namespace TinyChef
             if (mainCamera == null)
                 mainCamera = Camera.main;
         }
+
 
         /// <summary>
         /// Sets a specific reference (useful for dynamic assignments)

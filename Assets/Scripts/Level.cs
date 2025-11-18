@@ -5,6 +5,10 @@ namespace TinyChef
 {
     public class Level : MonoBehaviour
     {
+        [Header("Level Settings")]
+        [Tooltip("If true, the level will be dark with only the chef's spotlight")]
+        public bool isDarkLevel = false;
+
         [Header("Counter Groups")]
         public List<CounterGroup> counterGroups = new List<CounterGroup>();
 
@@ -65,6 +69,13 @@ namespace TinyChef
         {
             // Auto-pair portals by color
             PairPortalsByColor();
+
+            // Apply darkness settings if this is a dark level
+            LevelController levelController = ReferenceManager.Instance.LevelController ?? FindObjectOfType<LevelController>();
+            if (levelController != null)
+            {
+                levelController.SetDarknessMode(isDarkLevel);
+            }
         }
 
         private void PairPortalsByColor()
