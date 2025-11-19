@@ -121,7 +121,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7734374361615190085}
-  - component: {fileID: 7734374361615190086}
   - component: {fileID: 7113912848319777552}
   m_Layer: 6
   m_Name: Portal Counter
@@ -148,27 +147,6 @@ Transform:
   - {fileID: 3277356127189443706}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &7734374361615190086
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7734374361615190091}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 0.6, z: 0.6}
-  m_Center: {x: 0, y: 0.15, z: 1.5}
 --- !u!114 &7113912848319777552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,16 +169,6 @@ MonoBehaviour:
   portalColor: 1
   pairedPortal: {fileID: 0}
   portalEffectContainer: {fileID: 3277356127189443706}
-  portalEffects:
-  - color: 0
-    vfxPrefab: {fileID: 8796134042532604101, guid: d87dec8fa7ec448f1b0ac7ef19044843,
-      type: 3}
-  - color: 2
-    vfxPrefab: {fileID: 7259917728994331486, guid: 5c4af189e62fc43d387030aea3b897c7,
-      type: 3}
-  - color: 1
-    vfxPrefab: {fileID: 8796134042532604101, guid: cd1ba7226a87747ca84867fd8859ebba,
-      type: 3}
 --- !u!1001 &4670201597973929277
 PrefabInstance:
   m_ObjectHideFlags: 0
